@@ -161,10 +161,23 @@ body {
         font-size: 10px;
     }
     
-    #tel-fax-tbl th[rowspan="3"] {
-        writing-mode: vertical-rl;
-        text-orientation: upright;
-    }
+    /* 1. 元の指定を解除し、中身の配置を調整 */
+#tel-fax-tbl th[rowspan="3"] {
+    writing-mode: horizontal-tb; /* 一旦リセット */
+    text-align: center;
+    vertical-align: middle;
+    width: 30px; /* 幅を明示的に指定 */
+    padding: 0;
+}
+
+/* 2. セルの中に span を入れる想定で、その span を縦書きにする */
+#tel-fax-tbl th[rowspan="3"] span {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    line-height: 1;
+    margin: auto;
+}
     
     #delivery-info-tbl {
         width: 100%;
