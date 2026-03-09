@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>商談メモ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="main-container">
+<!--  <h1 contenteditable="true">商談メモ：別紙</h1>  -->  
+  <div class="flex-container">
+        <h4 contenteditable="true">パソコン・デジタルサポート商談メモ</h4>
+        <div>
+            <table id="sales-info-tbl">
+                <tr>
+                <th>受付日</th>
+                <th>担当者コード</th>
+                <th>販売担当者</th>
+                <th class="space-col"></th><th>案件番号</th>
+                </tr>
+                <tr>
+                <td contenteditable="true">/</td>  
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td  class="space-col"></td>
+                <td contenteditable="true"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="customer-info-container">
+        <table id="customer-tbl">
+            <tr>
+                <th class="bottom-line-dotted">フリガナ</th>
+                <td id="customer-tbl_fujigana-1" class="bottom-line-dotted" contenteditable="true"></td>
+                <td id="customer-tbl_fujigana-2"class="bottom-line-dotted" ></td>
+            </tr>
+            <tr>
+                <th class="upper-line-dotted">お名前</th>
+                <td id="customer-tbl_name-1" class="upper-line-dotted" contenteditable="true"></td>
+                <td id="customer-tbl_name-2" class="upper-line-dotted">様</td>
+            </tr>
+            <tr>
+                <th>ご住所</th>
+                <td id="customer-tbl_address-1" contenteditable="true">〒　　　-　　　　</td>
+                <td id="customer-tbl_address-2"></td>
+                
+            </tr>
+        </table>
+
+        <table id="tel-fax-tbl">
+            <tr>
+                <th rowspan="3">TEL</th>
+                <td>優先</td>
+                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
+            </tr>
+            <tr>
+                <td>第二</td>
+                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
+            </tr>
+            <tr>
+                <td>FAX</td>
+                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="disclaimer-div">
+        <table class="disclaimer-tbl">
+        <tr>
+            <th>免責事項</th>
+            <th>お客様説明</th>
+        </tr>
+        <tr>
+            <td>
+                ケーズデンキに作業を依頼する場合、プログラム、データ、ソフトウェア等の損傷や喪失についてはケーズデンキの過失の有無を問わず
+                いかなる場合においてもケーズデンキはその責を負わないこととします。パソコン内にある機密情報(パスワード含む)はお客様の責任で消去してください。
+                それらの機密漏洩に関してケーズデンキは一切その責を負わないものとします。
+            </td>
+            <td>
+                説明後✓<br>済 ▢
+            </td>
+        </tr>
+        </table>
+    </div>
+
+    <table id="delivery-info-tbl">
+        <tr>
+            <th>出庫区分</th>
+            <th>作業種別</th>
+            <th>訪問日/店頭お渡し日</th>
+            <th>お時間</th>
+            <th>お届け品</th>
+            <th>アカウント用紙</th>
+        </tr>
+        <tr>
+            <td>
+                <select>
+                    <option value="持帰">0:持帰</option>
+                    <option value="後来" selected>1:後来</option>
+                    <option value="自配">2:自配</option>
+                    <option value="セ配">3:セ配</option>
+                    <option value="他来">4:他来</option>
+                    <option value="宅配">5:宅配</option>
+                </select>
+            </td>
+            <td>
+                <select>
+                <option value=""></option>
+                <option value="出張">出張</option>
+                <option value="店頭"  selected>店頭</option>
+                </select>
+            </td>
+            <td contenteditable="true">
+                
+            </td>
+            <td contenteditable="true">
+                
+            </td>
+            
+            <td> 
+                <select>
+                <option value=""></option>    
+                <option value="あり">あり</option>
+                <option value="なし">なし</option>
+                </select>
+            </td>
+            <td> 
+                <select>
+                <option value=""></option>    
+                <option value="あり">あり</option>
+                <option value="なし">なし</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <!-- 商品テーブル -->
+    <table id="product-tbl">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>型番</th>
+            <th>数量</th>
+            <th>単価</th>
+            <th>金額</th>
+            <th>保証</th>
+            <th>商品<br>状態</th>
+            <th>出庫</th>
+            <th>在庫店<br>コード</th>
+            <th>在庫<br>情報</th>
+            <th>発注</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="product-tbody">
+            <tr id="product-row-template" data-row-id="row-template" style="display: none;">
+              <td class="row-no"></td>
+              <td class="product-type" contenteditable="true"></td>
+              <td class="quantity" contenteditable="true" inputmode="numeric"></td>
+              <td class="price" contenteditable="true" inputmode="numeric"></td>
+              <td class="total" data-readonly></td>
+              <td><button class="toggle-warranty-btn">延保</button></td>
+              <td>
+                <select name="product-status">
+                  <option value="00">00</option>
+                  <option value="展示">展示</option>
+                </select>
+              </td>
+              <td>
+                <select name="outbound-type">
+                  <option value="持帰">0:持帰</option>
+                  <option value="後来" selected>1:後来</option>
+                  <option value="自配">2:自配</option>
+                  <option value="セ配">3:セ配</option>
+                  <option value="他来">4:他来</option>
+                  <option value="宅配">5:宅配</option>
+                </select>
+              </td>
+              <td class="stock-code" contenteditable="true" inputmode="numeric">1284</td>
+              <td>
+                <select name="stock-info-type">
+                  <option value="1">1:移動</option>
+                  <option value="2">2:仕入</option>
+                  <option value="3" selected>3:在庫</option>
+                  <option value="4">4:仕移</option>
+                  <option value="6">6:D移</option>
+                  <option value="9">9:D仕</option>
+                </select>
+              </td>
+              <td>
+                <select name="order-type">
+                  <option value=""></option>
+                  <option value="持帰">〇本</option>
+                  <option value="後来">△緊</option>
+                </select>
+              </td>
+              <td class="posa-flag">0</td>
+              <td><button class="delete-product-btn">削除</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="add-product-btn">追加</button>
+    <button class="open-modal-btn" data-modal-id="product-modal">商品</button>
+    <button class="open-modal-btn" data-modal-id="virus-modal">ウイルス対策</button>
+    <button class="open-modal-btn" data-modal-id="sale-modal">施策</button>
+    <button class="open-modal-btn" data-modal-id="warranty-modal">メーカ保証</button>
+
+    <div id="work-container">
+    <!-- 作業テーブル -->
+    <table id="work-tbl">
+        <thead>
+          <tr>
+            <th>No</th><th></th><th>作業内容</th><th>JAN</th><th>バーコード</th><th>数量</th><th>単価</th><th>金額</th>
+          </tr>
+        </thead>
+        <tbody id="work-rows">
+            <tr id="work-row-template" class="work-row" style="display: none;">
+                <td class="work-no row-no"></td>
+                <td class="work-code"></td>
+                <td class="work-item"></td>
+                <td class="work-janCode"></td>
+                <td class="work-barCode"><svg class="barcode-svg"></svg></td>
+                <td class="work-quantity" contenteditable="true" inputmode="numeric"></td>
+                <td class="work-price" contenteditable="true" inputmode="numeric"></td>
+                <td class="work-lineTotal"></td>
+                
+                <td style="border: none;"><button class="delete-work-btn">削除</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <table id="estimate-total-tbl" class="collapsing-border-table">
+            <tbody>
+                <tr>
+                    <th id="uchiwake-th"></th>
+                    <th>お買上合計(税込)</th>
+                    <th id="grand-total-val">0円</th>
+                </tr>
+                <tr>
+                    
+                    <td class="space"></td>
+                    <td >商品合計:</td>
+                    <td id="product-total-val">0円</td>
+                </tr>
+                <tr>
+                    <td class="space">内</td>
+                    <td>作業合計:</td>
+                    <td id="work-total-val">0円</td>
+                </tr>
+                <tr>
+                    <td class="space">訳</td>
+                    <td>小 計:</td>
+                    <td id="subtotal-val">0円</td>
+                </tr>
+                <tr>
+                    <td class="space"></td>
+                    <td>POSA(別会計):</td>
+                    <td id="posa-total-val">0円</td>
+                </tr>
+            </tbody>
+    </table>
+    </div>
+    
+    <button class="open-modal-btn" data-modal-id="support-menu-modal">サポートメニュー</button>
+    
+    
+        <table id="owned-equipment-tbl" class="collapsing-border-table">
+            <th>No</th>
+            <th>種類</th>
+            <th>お客様所有の製品型番</th>
+            <th>シリアルナンバー</th>
+            <tr>
+                <td>1</td>
+                <td class="owned-equipment-type" contenteditable="true">
+                    
+                    
+                </td>
+                <td class="product-model-cell" contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="owned-equipment-type" contenteditable="true"></td>
+                <td class="product-model-cell" contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="owned-equipment-type" contenteditable="true"></td>
+                <td class="product-model-cell" contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="owned-equipment-type" contenteditable="true"></td>
+                <td class="product-model-cell" contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+        </table>
+    
+        
+        <div class="no-break-div">
+        <small class="hidden-div1">お客様とのお約束事項(別紙入力)</small>
+        <table class="besshi-tbl hidden-div1">
+            <tr><td contenteditable="true">初期設定 MSA【新規・既存(outlook.jp・その他メール)】 ２段階認証【お渡し時・メール・電話(日時　　　　　　　　)】</td></tr>
+            <tr><td contenteditable="true">RD作成、Office認証、Windowsアップデート、メーカーアップデート、ウイルス対策(                     ユーザー登録【新規MSA・既存】)</td></tr>
+           <tr><td contenteditable="true"></td></tr>
+　　　     <tr><td contenteditable="true">別紙案内入力：2Fアシストカンターにてお渡しいたします。MSアカウント登録電話番号をお持ちの方のご来店をお願いいたします。	</td></tr>
+        </table>
+        </div>        
+        <div class="no-break-div">
+        <small class="hidden-div1">社内伝達事項</small>
+        <table class="besshi-tbl hidden-div1">
+            <tr><td contenteditable="true">　</td></tr>
+            <tr><td contenteditable="true">　</td></tr>
+        </table>
+        </div>
+
+<div class="save-load-container">
+    <button id="save-data-btn">SAVE</button>
+    <input type="file" id="load-file-input" style="display: none;">
+    <button id="load-file-btn">LOAD</button>
+</div>
+
+</main>
+
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <h3>USBメモリ</h3>
+            <ul data-modal-list-id="product-modal-list" id="productList">
+                <li data-name="KUS-2A-32GW" data-price="800">KIOXIA USB2.0 Type-A(KUS-2A-32GW)  - ¥800</li>
+                <li data-name="RUF-SP32G-BK" data-price="1000">BUFFALO USB3.2 Type-A(RUF32GB-BF)  - ¥1,000</li>
+                <li data-name="MF-TPC3032GBK" data-price="1500">ELECOM USB3.2 Type-A&C(MF-TPC3032GBK)  - ¥1,500</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="virus-modal" class="modal">
+        <div class="modal-content">
+            <h3>ウイルスバスタートータルセキュリティ</h3>
+            <ul data-modal-list-id="virus-modal-list">
+                <h4>【スタンダード】</h4>
+                <li data-name="ウイルスバスター1年版(スタンダード)" data-price="6600">1年版  - ¥6,600</li>
+                <li data-name="ウイルスバスター3年版(スタンダード)" data-price="13640">3年版  - ¥13,640</li>
+                <li data-name="ウイルスバスター4年版(スタンダード)" data-price="15620">4年版 - ¥15,620</li>
+                <li data-name="【POSA】ウイルスバスター4年版(スタンダード)" data-price="15620" data-posa-flag="1">【POSA】4年版 - ¥15,620</li>
+                <hr>
+                <h4>【プレミアム】</h4>
+                <li data-name="ウイルスバスター1年版(プレミアム)" data-price="13640">1年版 - ¥13,640</li>
+                <li data-name="ウイルスバスター3年版(プレミアム)" data-price="26180">3年版 - ¥26,180</li>
+                <hr>
+                <h4>VB同時購入値引き</h4>
+                <li data-name="VB値引き-国内PC用(I0049500)" data-price="-2000">値引き(国内PC用)  - ▲2,000</li>
+                <li data-name="VB値引き-海外PC用(I0049502)" data-price="-3000">値引き(海外PC用)  - ▲3,000</li>
+                <li data-name="VB値引き-期間限定(I0049897)" data-price="-1500">値引き(期間限定)  - ▲1,500</li>
+                
+                <hr>
+                <h3>Fujitsu限定</h3>
+                <li data-name="【POSA】Fujitsu限定マカフィー1年版" data-price="2500" data-posa-flag="1">1年版 - ¥2,500</li>
+                <li data-name="【POSA】Fujitsu限定マカフィー3年版" data-price="6500" data-posa-flag="1">3年版 - ¥6,500</li>
+            
+                <hr>
+                <h3>マカフィーリブセーフ(Fujitsu以外)</h3>
+                <li data-name="【POSA】マカフィー1年版" data-price="4950"  data-posa-flag="1">1年版  - ¥4,950</li>
+                <li data-name="【POSA】マカフィー3年版" data-price="11000"  data-posa-flag="1">3年版  - ¥11,000</li>
+                </ul>
+        </div>
+    </div>
+
+    <div id="sale-modal" class="modal">
+        <div class="modal-content">
+            <ul data-modal-list-id="sale-modal-list">
+                <h2>PC本体値引</h2>
+                <h4>AI搭載パソコン値引施策</h4>
+                <li data-name="AIPC(I0056581)" data-price="-10000">AI搭載パソコン値引施策 - ▲10,000</li>
+                <hr>
+
+                <h4>NEC</h4>
+                <li data-name="NECﾓﾊﾞｲﾙPCﾄｸﾍﾞﾂﾈﾋﾞｷ5000(IOO56614)" data-price="-5000">モバイルPC特別値引 - ▲5,000</li>
+                <li data-name="NECﾓﾊﾞｲﾙPCﾄｸﾍﾞﾂﾈﾋﾞｷ11000(IOO56613)" data-price="-11000">モバイルPC特別値引 - ▲10,000</li>
+                <hr>
+                
+                <h4>富士通</h4>
+                <li data-name="FMVｶﾙｸﾃｲｲﾈ5500(I0056622)" data-price="-5500">FMV軽くていいね! - ▲5,500</li>
+                <li data-name="FMVｶﾙｸﾃｲｲﾈ11000(I0056623)" data-price="-11000">FMV軽くていいね! - ▲11,000</li>
+                <hr>
+
+                <h4>NEC/Lnovo</h4>
+                <li data-name="NL-ﾓﾊﾞｲﾙ5000(I0056815)" data-price="-5000">NEC/Lnovoモバイルパソコン特別セール - ▲5,000</li>
+                <hr>
+
+
+                <h2>メーカー保証セット値引き</h2>
+                <h4>NEC 保証値引き</h4>
+                <li data-name="(NEC)ﾎｼｮｳﾈﾋﾞｷ2200(I0056609)" data-price="-2200" >NEC保証値引き - ▲2,200</li>
+                <hr>
+                <h4>富士通 保証値引き</h4>
+                <li data-name="(ﾌｼﾞﾂｳ)ﾎｼｮｳﾈﾋﾞｷ3300(I0056610)" data-price="-3300" >富士通保証値引き - ▲3,300</li>
+                <hr>
+                <h4>dynabook 保証値引き</h4>
+                <li data-name="(ﾀﾞｲﾅﾌﾞｯｸ)ﾎｼｮｳﾈﾋﾞｷ3300(I0056642)" data-price="-2200" >dynabook保証値引き - ▲2,200</li>
+                <hr>
+                <h4>Lenovo保証値引き</h4>
+                <li data-name="(ﾚﾉﾎﾞ)ﾎｼｮｳﾈﾋﾞｷ2200(I0056612)" data-price="-2200" >Lenovo保証値引き - ▲2,200</li>
+                <hr>
+                <h4>ASUS保証値引き</h4>
+                <li data-name="(ASUS)ﾎｼｮｳﾈﾋﾞｷ2200(I0056611)" data-price="-2200" >ASUS保証値引き - ▲2,200</li>
+                <hr>
+               
+            
+
+
+            </ul>
+        </div>
+    </div>
+
+    <div id="warranty-modal" class="modal">
+        <div class="modal-content">
+            <ul data-modal-list-id="warranty-modal-list">
+                <h4>NECあんしんプレミアム保証</h4>
+                <li data-name="【POSA】NECあんしんプレミアム保証3年" data-price="17820" data-posa-flag="1">3年 - 17,820</li>
+                <li data-name="【POSA】NECあんしんプレミアム保証4年" data-price="23860" data-posa-flag="1">4年 - 23,860</li>
+                <li data-name="【POSA】NECあんしんプレミアム保証5年" data-price="29700" data-posa-flag="1">5年 - 29,700</li>
+                <hr>
+                <h4>FMVパソコンワイド保証サービス</h4>
+                <li data-name="【POSA】FMVパソコンワイド保証サービス3年" data-price="23100" data-posa-flag="1">3年 - 23,100</li>
+                <li data-name="【POSA】FMVパソコンワイド保証サービス4年" data-price="29700" data-posa-flag="1">4年 - 29,700</li>
+                <li data-name="【POSA】FMVパソコンワイド保証サービス5年" data-price="36300" data-posa-flag="1">5年 - 36,300</li>
+                <hr>
+                <h4>FMV LOOX Premium Care
+                <li data-name="【POSA】FMV LOOX Premium Care 3年" data-price="29800" data-posa-flag="1">3年 - 29,800</li>
+                <li data-name="【POSA】FMV LOOX Premium Care 4年" data-price="39800" data-posa-flag="1">4年 - 39,800</li>
+                <li data-name="【POSA】FMV LOOX Premium Care 5年" data-price="49800" data-posa-flag="1">5年 - 49,800</li>
+                <hr>
+                <h4>dynabookプレミアム保証</h4>
+                <li data-name="【POSA】dynabookプレミアム保証 3年" data-price="23100" data-posa-flag="1">3年 - 23,100</li>
+                <li data-name="【POSA】dynabookプレミアム保証 4年" data-price="29700" data-posa-flag="1">4年 - 29,799</li>
+                <li data-name="【POSA】dynabookプレミアム保証 5年" data-price="36300" data-posa-flag="1">5年 - 36,300</li>
+                <hr>
+                <h4>ASUSの安心保証プレミアム</h4>
+                <li data-name="【POSA】ASUSの安心保証プレミアム 3年" data-price="14800" data-posa-flag="1">3年 - 14,800</li>
+                <li data-name="【POSA】ASUSの安心保証プレミアム 4年" data-price="23800" data-posa-flag="1">4年 - 23,800</li>
+                <hr>
+                <h4>HP Care Packアクシデントサポート(HPシリーズ)</h4>
+                <li data-name="【POSA】HP Care Packアクシデントサポート 3年" data-price="21780" data-posa-flag="1">3年 - 21,780</li>
+                <hr>
+                <h4>Lenovo</h4>
+                <li data-name="【POSA】Lenovoレギュラー延長保守 3年保証" data-price="7920" data-posa-flag="1">レギュラー延長保守 3年 - 7,920</li>
+                <li data-name="【POSA】Lenovoアクシデントダメージプロテクション 3年保証" data-price="15730" data-posa-flag="1">アクシデントダメージプロテクション 3年 - 15,730</li>
+                <li data-name="【POSA】Lenovoプレミアムケアダメージプロテクション 3年保証" data-price="29700" data-posa-flag="1">レギュラー延長保守 3年 - 29,700</li>
+                <hr>
+            </ul>
+        </div>
+    </div>
+
+    <div id="support-menu-modal" class="modal"> 
+        <div class="modal-content">
+            <h3>サポートメニュー</h3>
+            <div>
+                <input type="search" id="filter-input" placeholder="コードまたは内容を検索..." style="width: 90%; margin-bottom: 10px; padding: 3px;">
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>コード</th>
+                                <th>内容</th>
+                                <th>金額</th>
+                                <th>JANコード</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-list-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+<div id="discount-menu" class="context-menu" style="display: none;">
+  <ul>
+    <h4>安心パスポート値引</h4>
+    <li data-discount="5%" data-label="【安パス5%引】">5%引</li>
+    <li data-discount="8%" data-label="【安パス5%引】">8%引(11/14まで)</li>
+    <li data-discount="10%" data-label="【安パス5%引】">10%引<hr></li>
+    <h4>アプリクーポン</h4>
+　　<li data-discount="500円" data-label="【アプリ初回登録ｸｰﾎﾟﾝ500円引】">500円引 ※単品1,000円(税込)以上<br>(アプリ初回登録時)</li>
+    <li data-discount="500円" data-label="【アプリ10周年感謝ｸｰﾎﾟﾝｸｰﾎﾟﾝ500円引】">500円引 ※単品3,000円(税込)以上<br>(アプリ10周年感謝ｸｰﾎﾟﾝ3/31まで1回限り)</li>
+    <li data-discount="500円" data-label="【お気入店舗登録特典ｸｰﾎﾟﾝ500円引】">500円引 ※単品3,000円(税込)以上<br>(お気に入り店舗登録特典ｸｰﾎﾟﾝ3/31まで1回限り)</li>
+    <li data-discount="100円" data-label="【ｸｰﾎﾟﾝ100円引】">100円引 ※単品1,000円(税込)以上</li>
+    <li data-discount="300円" data-label="【ｸｰﾎﾟﾝ300円引】">300円引 ※単品5,000円(税込)以上</li>
+    <li data-discount="1000円" data-label="【クーポン1000円引】">1000円引 ※単品15,000円(税込)以上</li>
+<li data-discount="2000円" data-label="【クーポン2000円引】">2000円引 ※単品20,000円(税込)以上<hr></li>
+    <li data-discount="clear">割引をクリア</li>
+  </ul>
+</div>
+
+<div id="owned-product-modal" class="modal">
+    <div class="modal-content">
+        <h3>製品型番を選択</h3>
+        <ul id="owned-product-list">
+            </ul>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+<script src="s_menu.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

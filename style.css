@@ -1,0 +1,740 @@
+body {
+      margin: 0;
+      padding: 0;
+      font-family: "Yu Gothic", "游ゴシック体", sans-serif;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: normal;
+    }
+
+    th,td {
+        font-size: 12px;
+        border: 1px solid black;
+        text-align: center;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 0px;
+      margin-bottom: 3px;
+    }
+
+    input,
+    select,
+    textarea {
+        font-family: inherit; /* フォントファミリーを継承 */
+        font-size: inherit; /* フォントサイズも継承 */
+        border: none;
+        background-color: transparent;
+    }
+
+    .js-dynamic-select {
+        border: none;
+        background-color: transparent;
+        width: 100%;
+    }
+    
+    .main-container {
+      max-width: 765px;
+/*      max-width: 767px; */
+      margin-left: auto;
+      margin-right: auto;
+      
+    }
+    
+    .flex-container{   
+        display:flex ;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #sales-info-tbl th {
+        height: 10px;
+        font-size: 10px;
+        line-height:10px;        
+        padding:0;
+    }
+    #sales-info-tbl th:nth-child(1){ width: 80px;}   /* 受付日 */
+    #sales-info-tbl th:nth-child(2){ width: 80px; }   /* 担当者コード */
+    #sales-info-tbl th:nth-child(3){ width: 150px; }  /* 販売担当者 */
+    #sales-info-tbl th:nth-child(5){width: 100px;}     /* 案件番号 */
+    #sales-info-tbl .space-col{
+        width: 10px;
+        visibility: hidden;
+        border-top: none;
+        border-bottom: none;
+    }
+    
+
+    .disclaimer-tbl{
+        width: 100%;
+    }
+    .disclaimer-tbl th{
+        line-height: 10px;
+    }
+    
+    .disclaimer-tbl th:nth-child(2){
+        font-size: 10px;
+        width:50px;
+    }
+    .disclaimer-tbl td:nth-child(1){
+        text-align: left;
+    }
+    .disclaimer-tbl td:nth-child(1),
+    .disclaimer-tbl td:nth-child(2){
+        font-size: 10px;
+    }
+
+    .customer-info-container {
+        display: flex;
+        width: 100%;
+    }
+    #customer-tbl {
+        width: 65%;
+    }
+*
+    #customer-tbl td {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    #customer-tbl th {
+        width: 50px;
+    }
+    
+    #customer-tbl tr:nth-child(1) th,
+    #customer-tbl tr:nth-child(1) td {
+        border-bottom: 1px dotted black;
+    }
+    #customer-tbl tr:nth-child(2) th,
+    #customer-tbl tr:nth-child(2) td {
+        border-top: none;
+        
+    }
+
+    #customer-tbl_fujigana-1,
+    #customer-tbl_name-1,
+    #customer-tbl_address-1 {
+        border-right:none;
+
+    }
+    #customer-tbl_fujigana-2,
+    #customer-tbl_name-2,
+    #customer-tbl_address-2 {
+  
+        border-right:none;
+        border-left:none;
+        width: 30px;
+    }
+
+#customer-tbl tr:nth-child(1) td {
+        height: 10px;
+        vertical-align: middle;
+        text-align: left;
+        font-size: 0.8em;
+    }
+    
+    
+    #customer-tbl tr:nth-child(2) td {
+        height: 30px;
+        vertical-align: middle;
+        text-align: left;
+        font-size: 1.0em;
+    }
+    
+    #customer-tbl tr:nth-child(3) td {
+        height: 40px;
+        vertical-align: top;
+        text-align: left;
+        text-decoration: underline;
+    }
+
+    #tel-fax-tbl {
+        width: 35%;
+    }
+    
+    #tel-fax-tbl tr:nth-child(1) td{
+        width: 50px;
+    }
+
+    #tel-fax-tbl {
+        font-size: 10px;
+    }
+    
+    #tel-fax-tbl th[rowspan="3"] {
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+    }
+    
+    #delivery-info-tbl {
+        width: 100%;
+    }
+    #delivery-info-tbl {
+        line-height: 10px;
+    }
+     
+    #delivery-info-tbl th:nth-child(1){ width: 100px; }
+    #delivery-info-tbl th:nth-child(2){ width: 100px; }
+    #delivery-info-tbl th:nth-child(3){ width: 100px; }
+    #delivery-info-tbl th:nth-child(4){ width: 100px; }
+    #delivery-info-tbl th:nth-child(5){ width: 100px; }
+    #delivery-info-tbl th:nth-child(6){ width: 100px; }
+    
+    
+
+    #menu-container tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    input[type="text"],
+    input[type="number"] {
+      box-sizing: border-box;
+      width: 100%;
+    }
+    
+    #product-tbl {
+      table-layout: fixed;
+    }
+    #product-tbl th {
+        line-height:10px;
+    }
+
+    #product-tbl th:nth-child(1){ width: 25px; }   /*No*/
+    #product-tbl th:nth-child(2){ width: 267px; }  /*型番*/
+    #product-tbl th:nth-child(3){ width: 25px; }   /*数量*/
+    #product-tbl th:nth-child(4){ width: 60px;}    /*単価*/
+    #product-tbl th:nth-child(5){ width: 60px; }   /*金額*/
+    #product-tbl th:nth-child(6){ width: 40px; }   /*保証*/
+    #product-tbl th:nth-child(7){ width: 45px; }   /*商品状態*/
+    #product-tbl th:nth-child(8){ width: 60px; }   /*出庫*/
+    #product-tbl th:nth-child(9){ width: 45px; }   /*在庫店コード*/
+    #product-tbl th:nth-child(10){ width: 45px; }  /*在庫情報*/
+    #product-tbl th:nth-child(11),                 /*発注*/
+    #product-tbl td:nth-child(11){ width: 45px; }
+    #product-tbl th:nth-child(12),                 /*POSA*/
+    #product-tbl td:nth-child(12){ width: 0px; }
+    #product-tbl th:nth-child(13),                 /*削除*/  
+    #product-tbl td:nth-child(13){
+        width: 50px;
+        border: none;
+    }
+    
+    #product-tbl td:nth-child(4),
+    #product-tbl td:nth-child(5){
+       text-align: right;
+       padding-right: 3px;
+       padding-left: 0px;
+    }
+    
+    #product-tbl td:nth-child(2){
+        text-align: left;
+        padding-left: 10px;
+    }
+  
+    #product-tbl th:nth-child(12),
+    #product-tbl td:nth-child(12){
+        display: none;
+    }
+    
+    #product-tbl th:nth-child(13) {
+        visibility:hidden;
+    }
+    
+    #work-tbl .work-barCode {
+        padding: 2px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+/*
+    #work-tbl .work-barCode svg {
+        height: 32px;
+        vertical-align:middle;
+    }
+*/
+    #work-tbl th {
+        line-height: 10px;
+    }  
+
+    #work-tbl th:nth-child(4),
+    #work-tbl td:nth-child(4),
+    #work-tbl th:nth-child(5),
+    #work-tbl td:nth-child(5) {
+      display: none;
+    }
+    
+ /*   #work-tbl {width: 100%;}*/
+    #work-tbl th:nth-child(1){
+        width: 25px;
+        padding-left: 0px;
+        padding-right: 0px;
+        display: none;
+    }
+ 
+    #work-tbl td:nth-child(1){
+        display: none;  
+    }
+
+    #work-tbl th:nth-child(2){
+         width: 30px;
+        border-right: none;
+     }
+    #work-tbl th:nth-child(3){
+        border-left: none;
+    }
+    #work-tbl td:nth-child(3){ 
+        width: 230px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    #work-tbl th:nth-child(5) ,
+    #work-tbl td:nth-child(5) {width: 50px;}
+    #work-tbl th:nth-child(6) ,
+    #work-tbl td:nth-child(6) {text-align: center;width: 25px;}
+    #work-tbl td:nth-child(7) ,
+    #work-tbl td:nth-child(8) {
+        text-align: right;
+         width: 60px;
+        padding-right: 5px;
+    }
+    #work-tbl th:nth-child(9),
+    #work-tbl td:nth-child(9) {
+        padding: 0;
+        width: 50px;
+    }
+
+    #work-tbl .work-item {text-align: left;}
+
+    #work-tbl .work-quantity,
+    #work-tbl .work-price,
+    #work-tbl .work-lineTotal {
+      text-align: right;
+    }
+
+    #work-container {
+        display: flex;
+        align-items: flex-start;
+        gap: 0px;
+    /* align-items: stretch;
+     justify-content: space-between;
+     */
+    }
+
+    #owned-equipment-tbl {
+     width: 100%;
+    /*    width: 505px;*/
+    table-layout: fixed; /* これを記述することで各thのwidthが効くようになる */
+    }
+
+    #owned-equipment-tbl th{
+        line-height: 10px;
+    }    
+
+    #estimate-total-tbl {
+        width: 30%;
+    }
+
+
+    
+
+    #owned-equipment-tbl th:nth-child(1),
+    #owned-equipment-tbl td:nth-child(1){
+        width: 25px;
+        padding: 0;
+    }
+    #owned-equipment-tbl th:nth-child(2),
+    #owned-equipment-tbl td:nth-child(2){
+       width: 80px;
+        padding: 0;
+    }
+    #owned-equipment-tbl th:nth-child(3),
+    #owned-equipment-tbl td:nth-child(3){
+       width: 250px;
+        padding: 0;
+        cursor: pointer; /* クリック可能であることを示す */
+    }
+    #owned-equipment-tbl th:nth-child(4),
+    #owned-equipment-tbl td:nth-child(4){
+       width: 130px;
+        padding: 0;
+    }
+
+    #estimate-total-tbl th {
+        font-weight: bold;
+        height: 20px;
+    }
+
+
+    #estimate-total-tbl th:nth-child(1) {
+        border-right: none;
+        width: 0px;
+        padding: 0px;
+        
+    }
+    #estimate-total-tbl th:nth-child(3),
+    #estimate-total-tbl td:nth-child(3) {
+        width: 100px;
+        text-align: right
+    }
+    
+    #estimate-total-tbl tr:nth-child(2) td:nth-child(1),
+    #estimate-total-tbl tr:nth-child(3) td:nth-child(1),
+    #estimate-total-tbl tr:nth-child(4) td:nth-child(1){
+        padding: 0px;
+        border-top: none;
+        border-bottom: none;
+    }
+    #estimate-total-tbl tr:nth-child(5) td:nth-child(1){
+        border-top: none;
+    }
+   
+    #estimate-total-tbl th:nth-child(2){
+        border-left: none;
+        text-align: right;
+        width: 140px;
+        padding-left: 0px;
+    }
+    #estimate-total-tbl tr:nth-child(2) td:nth-child(2),
+    #estimate-total-tbl tr:nth-child(3) td:nth-child(2),
+    #estimate-total-tbl tr:nth-child(4) td:nth-child(2),
+    #estimate-total-tbl tr:nth-child(5) td:nth-child(2) {
+        text-align: right;
+    }
+   /* 
+    .save-load-container {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+    }
+*/
+    #virus-protection-tbl td, #virus-protection-tbl th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 5px;
+    }
+    #virus-protection-tbl th {
+        background-color: #f2f2f2;
+    }
+    
+    #virus-protection-tbl button {
+        cursor: pointer;
+    }
+    
+    #virus-protection-tbl td:nth-child(3) {
+        text-align: right;
+        padding-left: 0px;
+    }
+    
+    #filter-input {
+        border: 1px solid black;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+    
+    }
+
+
+    #productList, #owned-product-list {
+        margin-top: 0;
+        list-style: none;
+        padding: 0;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    #productList li, #owned-product-list li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    #productList li:hover, #owned-product-list li:hover {
+        background-color: #f0f0f0;
+    }
+    h3,h4 {
+        margin: 0;
+    }
+
+    #support-menu-modal table th:nth-child(4),
+    #support-menu-modal table td:nth-child(4) {
+        display: none;
+    }
+
+    .besshi-tbl {
+       border: 1px solid #333; /* 2px、実線、濃い灰色 */
+       width: 100%; /* 幅を適当に設定 */
+       margin: 0px; /* 見やすいように余白を設定 */
+       padding: 0;
+    }
+
+/* 各行のスタイル */
+.besshi-tbl td {
+    text-align: left;
+    
+    /* 基本的に下の境界線を点線（dotted）または破線（dashed）にする */
+    /* border-bottom: 1px dotted #999; /* 1px、点線、薄い灰色 */
+     border-bottom: 1px dashed #999; /* 破線にしたい場合はこちら */
+}
+    .customer-table {
+      display: flex;
+      height: 150px;
+      border: 1px solid black;
+      border-right: none;
+      font-size: 10px;
+      align-items: stretch;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 0;
+    }
+    .flexible-column {
+      flex-grow: 1;
+    }
+
+    .cell {
+      flex-grow: 1;
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    .column > .cell:last-child {
+      border-bottom: none;
+    }
+
+    .furigana-row {
+      flex-grow: 0;
+      height: 20px;
+      border-bottom-style: dotted;
+    }
+    .name-row {
+      flex-grow: 0;
+      height: 50px;
+    }
+
+    .tel-label-column {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      justify-content: center;
+    }
+
+    .content-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+    .content-wrapper.align-right {
+      justify-content: flex-end;
+      align-items: center;
+      padding-right: 20px;
+    }
+    .content-wrapper.align-top-left {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 5px;
+    }
+
+    .honorific {
+      font-size: 2em;
+    }
+    .postal-code {
+      font-size: 1.5em;
+      text-decoration: underline;
+    }
+    /*印刷以外非表示
+    .hidden-div,
+    .customer-info-container,
+    .flex-container,
+    .disclaimer-div {
+        display: none;
+    }
+ */
+
+    #product-tbl td[contenteditable="true"]:focus,
+    #work-tbl td[contenteditable="true"]:focus,
+    #owned-equipment-tbl td[contenteditable="true"]:focus {
+        outline: 2px solid #4CAF50;
+        outline-offset: -2px;
+    }
+
+    .collapsing-border-table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .collapsing-border-table th,
+    .collapsing-border-table td {
+      border: 1px solid #000;
+      padding: 8px;
+    }
+    
+    .context-menu {
+        position: absolute;
+        z-index: 1000;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        padding: 5px 0;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    .context-menu ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .context-menu li {
+        padding: 8px 12px;
+    }
+
+    .context-menu li:hover {
+        background-color: #f0f0f0;
+    }
+    
+
+
+/*
+ * 全てのモーダル共通のホバーエフェクト
+ * ----------------------------------------------------
+ */
+
+/* 1. リストアイテム (li) のホバーエフェクト（商品・保証などのモーダル） */
+.modal ul li {
+    /* 選択しやすいようにカーソルをポインターに変更 */
+    cursor: pointer;
+    /* transitionを追加すると、色の変化が滑らかになります（任意） */
+    transition: background-color 0.2s ease; 
+}
+.modal ul li:hover {
+    /* マウスオーバー時に背景色を黄緑に変更 */
+    background-color: #ccffcc; /* ← この部分を黄緑色に修正 */
+}
+
+/* 2. サポートメニュー（テーブル行 tr）のホバーエフェクト */
+#support-menu-modal #service-list-body tr {
+    /* 選択しやすいようにカーソルをポインターに変更 */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* 修正箇所: tr:hoverだけでなく、tr:hover tdも指定する */
+#support-menu-modal #service-list-body tr:hover,
+#support-menu-modal #service-list-body tr:hover td {
+    /* 行全体とセルに同じ黄緑色の背景色を適用 */
+    background-color: #ccffcc; /* ← この部分を黄緑色に修正 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    @media print {
+            
+    .no-break-div {
+        page-break-inside: avoid !important; /* 優先度を上げるために !important を追加 */
+        break-inside: avoid; /* 新しいブラウザ向けに追加 */
+    }      
+
+
+      button,
+     .toggle-state-button,
+     .delete-button,
+     .delete-work-button,
+     .open-modal-btn,
+     #add-row-btn {
+        display: none !important;
+     }
+        #product-tbl {
+          width: 100%;
+        table-layout: fixed;
+        }
+
+    
+
+
+        #product-tbl th:nth-child(6),
+        #product-tbl td:nth-child(6) {
+            display: none;
+        }
+        #product-tbl th:nth-child(12),
+        #product-tbl td:nth-child(12),
+        #product-tbl th:nth-child(13),
+        #product-tbl td:nth-child(13) {
+            display: none;
+        }
+        #work-tbl th:nth-child(5),
+        #work-tbl td:nth-child(5) {
+            display: table-cell;
+            border-left: none;
+        }
+        #work-tbl th:nth-child(3),
+        #work-tbl td:nth-child(3) {
+            border-right: none;
+            padding-left: 0px;
+            padding-right: 0px;
+
+        }
+
+
+
+        #work-tbl th:nth-child(9),
+        #work-tbl td:nth-child(9) {
+            display: none;
+        }
+    /* 印刷時は表示 */
+    
+    .hidden-div,
+    .customer-info-container,
+    .flex-container,
+    .disclaimer-div {
+        display: flex;
+    }
+        
+     /* selectボックスの矢印を非表示にするための追加スタイル */
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    
+}
