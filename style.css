@@ -749,5 +749,66 @@ body {
         -moz-appearance: none;
         appearance: none;
     }
+
+/* --- ここからドラッグ＆ドロップ用の追加設定（既存のコードは消さないでください） --- */
+#product-tbl tbody tr {
+    cursor: move; /* 掴めるカーソルに変更 */
+}
+
+/* ドラッグ中の行の見た目 */
+.dragging {
+    opacity: 0.5;
+    background-color: #f9f9f9 !important;
+    outline: 1px dashed #999;
+}
+
+/* 挿入位置を示す青い線 */
+.drag-over {
+    border-top: 2px solid #007bff !important;
+}
     
+/* --- スムーズなドラッグ移動用の演出 --- */
+.sortable-ghost {
+    opacity: 0.3;
+    background-color: #cbd5e0 !important;
+}
+
+.sortable-chosen {
+    background-color: #ebf8ff !important;
+}
+
+.sortable-drag {
+    opacity: 0.9;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+#product-tbl tbody tr {
+    cursor: grab;
+    transition: transform 0.2s; /* 入れ替わりのアニメーション速度 */
+}
+
+#product-tbl tbody tr:active {
+    cursor: grabbing;
+}
+
+/* --- 作業メニューもドラッグ可能にする --- */
+#product-tbl tbody tr,
+#work-tbl tbody tr {
+    cursor: grab;
+    transition: transform 0.15s; /* 入れ替わりのアニメーション */
+}
+
+#product-tbl tbody tr:active,
+#work-tbl tbody tr:active {
+    cursor: grabbing;
+}
+
+/* ドラッグ中の見た目（共通） */
+.sortable-ghost {
+    opacity: 0.3;
+    background-color: #cbd5e0 !important;
+}
+
+.sortable-chosen {
+    background-color: #ebf8ff !important;
 }

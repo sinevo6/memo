@@ -965,3 +965,150 @@ function loadTables(data) {
     
     alert('データを読み込みました。');
 }
+// --- 行のドラッグ＆ドロップ機能 (ここから末尾までコピー) ---
+(function() {
+    function initDragAndDrop() {
+        const tbody = document.querySelector('#product-tbl tbody');
+        if (!tbody) return;
+
+        let dragSrcEl = null;
+
+        function handleDragStart(e) {
+            dragSrcEl = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) e.preventDefault();
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            if (this !== dragSrcEl) this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            if (dragSrcEl !== this) {
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const dragIdx = rows.indexOf(dragSrcEl);
+                const targetIdx = rows.indexOf(this);
+
+                if (dragIdx < targetIdx) {
+                    tbody.insertBefore(dragSrcEl, this.nextSibling);
+                } else {
+                    tbody.insertBefore(dragSrcEl, this);
+                }
+                
+                // 既存の番号更新関数を実行
+                if (typeof updateRowNumbers === 'function') {
+                    updateRowNumbers('product-tbl');
+                }
+            }
+            return false;
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            tbody.querySelectorAll('tr').forEach(r => r.classList.remove('drag-over'));
+        }
+
+        function addEvents(row) {
+            row.setAttribute('draggable', true);
+            row.addEventListener('dragstart', handleDragStart);
+            row.addEventListener('dragover', handleDragOver);
+            row.addEventListener('dragenter', handleDragEnter);
+            row.addEventListener('dragleave', handleDragLeave);
+            row.addEventListener('drop', handleDrop);
+            row.addEventListener('dragend', handleDragEnd);
+        }
+
+        // 初期の行すべてに適用
+        tbody.querySelectorAll('tr').forEach(addEvents);
+
+        // 「行を追加」ボタンなどで新しい行が増えた時も自動適用する
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(m => {
+                m.addedNodes.forEach(node => {
+                    if (node.nodeType === 1 && node.tagName === 'TR') addEvents(node);
+                });
+            });
+        });
+        observer.observe(tbody, { childList: true });
+    }
+
+    // ページ読み込み後に実行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDragAndDrop);
+    } else {
+        initDragAndDrop();
+    }
+})();
+
+// --- SortableJSによるスムーズな行入れ替え設定 ---
+(function() {
+    function initSmoothDrag() {
+        const el = document.querySelector('#product-tbl tbody');
+        if (!el || typeof Sortable === 'undefined') return;
+
+        Sortable.create(el, {
+            animation: 150,       // 入れ替わり時のアニメーション時間(ms)
+            ghostClass: 'sortable-ghost',  // 移動先の影の色
+            chosenClass: 'sortable-chosen', // 選んだ行の色
+            dragClass: 'sortable-drag',   // ドラッグ中の見た目
+            
+            // 並び替えが終わった後に実行
+            onEnd: function() {
+                // 既存の番号振り直し関数を呼び出し
+                if (typeof updateRowNumbers === 'function') {
+                    updateRowNumbers('product-tbl');
+                }
+            }
+        });
+    }
+
+    // 読み込み時に実行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSmoothDrag);
+    } else {
+        initSmoothDrag();
+    }
+})();
+
+// --- 両方のテーブルにスムーズな並び替えを適用 ---
+(function() {
+    function setupSortable(tableId) {
+        const el = document.querySelector(`#${tableId} tbody`);
+        if (!el || typeof Sortable === 'undefined') return;
+
+        Sortable.create(el, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            // 並び替えが終わった後の処理
+            onEnd: function() {
+                // 番号を正しく振り直す
+                if (typeof updateRowNumbers === 'function') {
+                    updateRowNumbers(tableId);
+                }
+            }
+        });
+    }
+
+    // ページ読み込み時に実行
+    function initAllSortable() {
+        setupSortable('product-tbl'); // 商品テーブル
+        setupSortable('work-tbl');    // 作業メニューテーブル
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAllSortable);
+    } else {
+        initAllSortable();
+    }
+})();
