@@ -71,7 +71,7 @@ body {
     }
     #sales-info-tbl th:nth-child(1){ width: 80px;}   /* 受付日 */
     #sales-info-tbl th:nth-child(2){ width: 80px; }   /* 担当者コード */
-    #sales-info-tbl th:nth-child(3){ width: 150px; }  /* 販売担当者 */
+    #sales-info-tbl th:nth-child(3){ width: 80px; }  /* 販売担当者 */
     #sales-info-tbl th:nth-child(5){width: 100px;}     /* 案件番号 */
     #sales-info-tbl .space-col{
         width: 10px;

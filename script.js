@@ -1131,4 +1131,56 @@ function loadTables(data) {
         salesDateCell.textContent = `${month}/${day}`;
     }
 
+// --- 訪問日セルをクリックしたらカレンダーを開いて「9/23」形式で入力する処理 ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 訪問日/店頭お渡し日のセルを取得（delivery-info-tbl の3番目のtd要素）
+    const deliveryTable = document.getElementById('delivery-info-tbl');
+    if (!deliveryTable) return;
+    
+    const visitDateTd = deliveryTable.querySelector('tr:nth-child(2) td:nth-child(3)');
+    if (!visitDateTd) return;
+
+    // セルを相対位置にして、カレンダー入力要素を重ねる準備をする
+    visitDateTd.style.position = 'relative';
+    visitDateTd.style.cursor = 'pointer';
+
+    // 隠しカレンダー（input[type="date"]）を動的に作成
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    // 見えないように透明化してセル全体に重ねる
+    dateInput.style.position = 'absolute';
+    dateInput.style.top = '0';
+    dateInput.style.left = '0';
+    dateInput.style.width = '100%';
+    dateInput.style.height = '100%';
+    dateInput.style.opacity = '0';
+    dateInput.style.cursor = 'pointer';
+    
+    visitDateTd.appendChild(dateInput);
+
+    // セルをクリックしたときに確実にカレンダーをピッカー表示させる
+    visitDateTd.addEventListener('click', () => {
+        if (typeof dateInput.showPicker === 'function') {
+            dateInput.showPicker();
+        } else {
+            dateInput.click();
+        }
+    });
+
+    // 日付が選択されたら「M/D」形式に変換してセルのテキストに反映
+    dateInput.addEventListener('change', (e) => {
+        const val = e.target.value; // 例: "2026-09-23"
+        if (val) {
+            const dateObj = new Date(val);
+            const month = dateObj.getMonth() + 1;
+            const day = dateObj.getDate();
+            visitDateTd.childNodes[0].textContent = `${month}/${day}`;
+        }
+    });
+});
+
+
+
+
+
 })();
