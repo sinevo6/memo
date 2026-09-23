@@ -20,6 +20,21 @@ body {
       margin-bottom: 3px;
     }
 
+   .barcode-svg {
+  background-color: rgb(4, 41, 247);
+  
+  border: 1px dashed blue;
+  /*
+  display: block;
+  
+  width: 100%;
+  height: 20px;
+  
+  margin: 0;
+  padding: 0;*/
+}
+
+
     input,
     select,
     textarea {
@@ -260,9 +275,8 @@ body {
     }
     
     #work-tbl .work-barCode {
-        padding: 2px;
-        padding-left: 0px;
-        padding-right: 0px;
+        padding: 0px;
+       
     }
 /*
     #work-tbl .work-barCode svg {
@@ -278,7 +292,8 @@ body {
     #work-tbl td:nth-child(4),
     #work-tbl th:nth-child(5),
     #work-tbl td:nth-child(5) {
-      display: none;
+        padding: 0;
+      display: none; 
     }
     
  /*   #work-tbl {width: 100%;}*/

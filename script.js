@@ -540,9 +540,15 @@ function addWorkItemToTable(service) {
             JsBarcode(`#barcode-${newRowIndex}`, jancode, {
                 format: "EAN13",
                 displayValue: true,
-                width: 0.8,
-                height: 15,
-                margin: 5,
+                width: 1.5,
+                height: 30,
+		margin: 0,
+                /*
+		marginTop: 0,
+                marginRight: 0,
+                marginBottom: 0,
+                marginLeft: 0,
+		*/
                 fontSize: 10,
                 textMargin: 0
             });
@@ -938,8 +944,11 @@ function loadTables(data) {
                         format: "EAN13",
                         displayValue: true,
                         width: 1.2,
-                        height: 25,
-                        margin: 5,
+                        height: 30,
+                        marginTop: 0,
+                        marginRight: 0,
+                        marginBottom: 0,
+                        marginLeft: 0,
                         fontSize: 12,
                         textMargin: 0
                     });
@@ -1111,4 +1120,15 @@ function loadTables(data) {
     } else {
         initAllSortable();
     }
+    
+    // ★ ここに日付自動入力の処理を配置
+    const salesDateCell = document.getElementById('sales-date');
+    if (salesDateCell) {
+        const today = new Date();
+        const month = today.getMonth() + 1; // 月 (0～11のため +1)
+        const day = today.getDate();       // 日
+        
+        salesDateCell.textContent = `${month}/${day}`;
+    }
+
 })();
