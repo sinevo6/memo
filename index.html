@@ -2,564 +2,2828 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>商談メモ</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <title>パソコン・デジタルサポート商談メモ</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.3/tailwindcss.min.js"></script>
+  <!-- JsBarcode ライブラリの読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <!-- Papa Parse ライブラリの読み込み -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <!-- SortableJS ライブラリの読み込み -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+  <style>
+    @page {
+      size: A4;
+      margin: 5mm;
+    }
+    body { 
+      font-family: "BIZ UDPMedium", "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif; 
+      margin: 0 auto;
+      width: 200mm;
+      box-sizing: border-box;
+      background: #fff;
+      padding: 2mm;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1px;
+    }
+
+    h1 {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .meta-tables-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .meta-info-tbl {
+      font-size: 11px;
+      width: auto;
+      border-collapse: collapse;
+      border: 1px solid black;
+    }
+
+    .meta-info-tbl th {
+      background-color: #f7f7f7;
+      font-weight: normal;
+      line-height: 1.1;
+      border: 1px solid black;
+      padding: 0 !important;
+      vertical-align: middle;
+      text-align: center;
+      height: auto !important;
+    }
+
+    .meta-info-tbl td {
+      border: 1px solid black;
+      padding: 0 !important;
+      line-height: 1.1;
+      vertical-align: middle;
+      text-align: center;
+      height: 24px !important;
+    }
+
+    #meta-group-tbl th:nth-child(1), #meta-group-tbl td:nth-child(1) { width: 50px; }
+    #meta-group-tbl th:nth-child(2), #meta-group-tbl td:nth-child(2) { width: 50px; }
+    #meta-group-tbl th:nth-child(3), #meta-group-tbl td:nth-child(3) { width: 50px; }
+    #meta-case-tbl th:nth-child(1), #meta-case-tbl td:nth-child(1) { width: 75px; }
+
+    .editable-cell {
+      outline: none;
+      flex-grow: 1;
+    }
+
+    .customer-top-row {
+      display: flex;
+      margin-top: 2px;
+      margin-bottom: 1px;
+      gap: 0;
+    }
+
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: #ffffff;
+      z-index: 999;
+      padding: 5px 0;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 4px;
+    }
+
+    .sticky-header button {
+      appearance: auto;
+      -webkit-appearance: button;
+      background-color: #f0f0f0;
+      border: 1px solid #767676;
+      border-radius: 3px;
+      padding: 2px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .sticky-header button:hover {
+      background-color: #e0e0e0;
+    }
+
+    #product-tbl th:nth-child(4),
+    #product-tbl td.jan-cell {
+        display: none;
+    }
+
+    #work-tbl th:nth-child(5),
+    #work-tbl td.work-janCode {
+        display: none;
+    }
+
+    #modal-table th:nth-child(1),
+    #modal-table td:nth-child(1) {
+        display: none;
+    }
+
+    #product-tbl th, #product-tbl td,
+    #work-tbl th, #work-tbl td,
+    #posa-tbl th, #posa-tbl td,
+    #owned-equipment-tbl th, #owned-equipment-tbl td,
+    #delivery-info-tbl th, #delivery-info-tbl td {
+        font-size: 11px;
+        font-weight: normal;
+        border: 1px solid black;
+        padding: 0px 1px;
+        line-height: 1.0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    #product-tbl th, #work-tbl th, #posa-tbl th, #owned-equipment-tbl th, #delivery-info-tbl th {
+        background-color: #f2f2f2;
+    }
+
+    #product-tbl, #work-tbl, #posa-tbl, #owned-equipment-tbl, #delivery-info-tbl, .besshi-tbl {
+        border-collapse: collapse;
+        margin-top: 2px !important;
+        margin-bottom: 1px !important;
+        width: 100%;
+        table-layout: fixed;
+        word-break: break-all;
+    }
+
+    span.section-title {
+        font-size: 10px;
+        font-weight: bold;
+        display: block;
+        margin-top: 2px !important;
+        margin-bottom: 1px !important;
+        line-height: 1.1;
+    }
+
+    table select {
+        font-size: 11px;
+        border: none;
+        background: transparent;
+        appearance: none;          
+        -webkit-appearance: none;  
+        -moz-appearance: none;     
+        padding: 0;
+        width: 100%;               
+        text-align-last: center;   
+    }
+
+    .product-type, .work-item, .posa-type, .owned-equipment-type, .product-model-cell, .owned-serial-cell {
+        white-space: pre-wrap;
+    }
+
+    .price, .total, .work-price, .work-lineTotal, .posa-price, .posa-lineTotal {
+        text-align: right;
+    }
+
+    th.no-border, td.no-border {
+        border: none !important;
+        background-color: transparent !important;
+    }
+
+    .delete-btn-circle {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    .delete-btn-circle:hover {
+        background-color: #ff1a1a;
+    }
+
+    .add-btn-circle {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    .add-btn-circle:hover {
+        background-color: #0056b3;
+    }
+
+    .table-subtotal {
+        text-align: right;
+        font-weight: bold;
+        font-size: 10px;
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        line-height: 1.0;
+    }
+
+    .normal-group {
+        border: 2px solid black;
+        border-radius: 8px;
+        padding: 4px;
+        background-color: #ffffff;
+        margin-top: 2px;
+        margin-bottom: 1px;
+    }
+    .normal-group h3 {
+        font-size: 10px;
+        margin: 0 0 1px 0;
+        color: black;
+        padding-bottom: 2px;
+    }
+
+    .posa-group {
+        border: 2px solid black;
+        border-radius: 8px;
+        padding: 4px;
+        background-color: #ffffff;
+        display: none;
+        margin-top: 2px;
+        margin-bottom: 1px;
+    }
+    .posa-group h3 {
+        font-size: 10px;
+        margin: 0 0 1px 0;
+        color: black;
+        padding-bottom: 2px;
+    }
+
+    .besshi-tbl td {
+        text-align: left;
+        padding: 4px;
+        line-height: 1.3;
+        border: 1px solid black;
+        font-size: 11px;
+    }
+
+    .grand-total-container {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: bold;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        align-items: flex-end;
+        width: fit-content;
+        min-width: 250px;
+        border: 2px solid black;
+        border-radius: 8px;
+        padding: 4px 8px;
+        box-sizing: border-box;
+        background-color: #ffffff;
+        margin-top: 2px;
+        margin-bottom: 1px;
+    }
+
+    .subtotal-row {
+        display: grid;
+        grid-template-columns: 130px 40px 1fr;
+        align-items: center;
+        width: 100%;
+        line-height: 1.1;
+    }
+    .subtotal-row .label {
+        text-align: left;
+    }
+    .subtotal-row .sub-label {
+        text-align: right;
+    }
+    .subtotal-row .amount-wrap {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 3% auto;
+        padding: 10px 15px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 950px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+    .modal-header h3 {
+        font-size: 14px;
+        margin: 0;
+    }
+    .close-btn {
+        font-size: 20px;
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 0;
+        line-height: 1;
+    }
+    .modal-body {
+        overflow-y: auto;
+        max-height: 65vh;
+        border: 1px solid #ccc;
+    }
+    .filter-container {
+        margin-bottom: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .filter-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        font-size: 11px;
+    }
+    .filter-row input[type="search"] {
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+    #name-radios {
+        display: flex;
+        gap: 2px 6px;
+        flex-wrap: wrap;
+    }
+    #name-radios label {
+        font-size: 11px;
+        line-height: 1.0;
+        margin: 0;
+        padding: 0;
+    }
+
+    #modal-table th:nth-child(1), #modal-table td:nth-child(1) { width: 0px; display: none; }
+    #modal-table th:nth-child(2), #modal-table td:nth-child(2) { width: 80px; }
+    #modal-table th:nth-child(3), #modal-table td:nth-child(3) { width: auto; }
+    #modal-table th:nth-child(4), #modal-table td:nth-child(4) { width: 65px; }
+    #modal-table th:nth-child(5), #modal-table td:nth-child(5) { width: 65px; }
+    #modal-table th:nth-child(6), #modal-table td:nth-child(6) { width: 95px; }
+    #modal-table th:nth-child(7), #modal-table td:nth-child(7) { width: 100px; }
+
+    /* 施策モーダル用テーブルの幅調整 */
+    #measure-modal-table th:nth-child(1), #measure-modal-table td:nth-child(1) { width: auto; }
+    #measure-modal-table th:nth-child(2), #measure-modal-table td:nth-child(2) { width: 80px; }
+    #measure-modal-table th:nth-child(3), #measure-modal-table td:nth-child(3) { width: 100px; }
+    #measure-modal-table th:nth-child(4), #measure-modal-table td:nth-child(4) { width: 80px; text-align: right; }
+    #measure-modal-table th:nth-child(5), #measure-modal-table td:nth-child(5) { width: 90px; text-align: center; }
+    #measure-modal-table th:nth-child(6), #measure-modal-table td:nth-child(6) { width: 90px; text-align: center; }
+
+    #modal-table th, #modal-table td,
+    #measure-modal-table th, #measure-modal-table td,
+    #support-modal-table th, #support-modal-table td {
+        padding-top: 1px !important;
+        padding-bottom: 1px !important;
+        font-size: 11px;
+        line-height: 1.1;
+        border: 1px solid #ccc;
+    }
+    #modal-table tr:hover, #measure-modal-table tr:hover:not(.hidden), #support-modal-table tr:hover:not(.hidden) {
+        background-color: #f1f1f1;
+    }
+    #modal-table tr.selected, #measure-modal-table tr.selected, #support-modal-table tr.selected {
+        background-color: #d0e8ff !important;
+    }
+    .barcode-svg {
+        height: 20px;
+        max-width: 130px;
+        vertical-align: middle;
+        width: 100%;
+        object-fit: fill;
+    }
+    
+    #product-tbl th:nth-child(1), #product-tbl td:nth-child(1) { width: 20px; }
+    #product-tbl th:nth-child(2), #product-tbl td:nth-child(2) { width: 20px; }
+    #product-tbl th:nth-child(3), #product-tbl td:nth-child(3) { width: auto; }
+    #product-tbl th:nth-child(4), #product-tbl td:nth-child(4) { width: 0px; display: none; }
+    #product-tbl th:nth-child(5), #product-tbl td:nth-child(5) { width: 130px; }
+    #product-tbl th:nth-child(6), #product-tbl td:nth-child(6) { width: 30px; }
+    #product-tbl th:nth-child(7), #product-tbl td:nth-child(7) { width: 50px; }
+    #product-tbl th:nth-child(8), #product-tbl td:nth-child(8) { width: 50px; }
+    #product-tbl th:nth-child(9), #product-tbl td:nth-child(9) { width: 30px; }
+    #product-tbl th:nth-child(10), #product-tbl td:nth-child(10) { width: 30px; }
+    #product-tbl th:nth-child(11), #product-tbl td:nth-child(11) { width: 45px; }
+    #product-tbl th:nth-child(12), #product-tbl td:nth-child(12) { width: 45px; }
+    #product-tbl th:nth-child(13), #product-tbl td:nth-child(13) { width: 45px; }
+    #product-tbl th:nth-child(14), #product-tbl td:nth-child(14) { width: 30px; }
+    #product-tbl th:nth-child(15), #product-tbl td:nth-child(15) { width: 30px; }
+
+    #work-tbl th:nth-child(1), #work-tbl td:nth-child(1) { width: 20px; }
+    #work-tbl th:nth-child(2), #work-tbl td:nth-child(2) { width: 20px; }
+    #work-tbl th:nth-child(3), #work-tbl td:nth-child(3) { width: 60px; }
+    #work-tbl th:nth-child(4), #work-tbl td:nth-child(4) { width: auto; }
+    #work-tbl th:nth-child(5), #work-tbl td:nth-child(5) { width: 0px; display:none; }
+    #work-tbl th:nth-child(6), #work-tbl td:nth-child(6) { width: 130px; }
+    #work-tbl th:nth-child(7), #work-tbl td:nth-child(7) { width: 30px; }
+    #work-tbl th:nth-child(8), #work-tbl td:nth-child(8) { width: 50px; }
+    #work-tbl th:nth-child(9), #work-tbl td:nth-child(9) { width: 50px; }
+    #work-tbl th:nth-child(10), #work-tbl td:nth-child(10) { width: 30px; }
+
+    #posa-tbl { width: 500px; }   
+    #posa-tbl th:nth-child(1), #posa-tbl td:nth-child(1) { width: 20px; }
+    #posa-tbl th:nth-child(2), #posa-tbl td:nth-child(2) { width: 20px; }
+    #posa-tbl th:nth-child(3), #posa-tbl td:nth-child(3) { width: 250px; }
+    #posa-tbl th:nth-child(4), #posa-tbl td:nth-child(4) { width: 30px; }
+    #posa-tbl th:nth-child(5), #posa-tbl td:nth-child(5) { width: 50px; }
+    #posa-tbl th:nth-child(6), #posa-tbl td:nth-child(6) { width: 50px; }
+    #posa-tbl th:nth-child(7), #posa-tbl td:nth-child(7) { width: 30px; }
+
+    #owned-equipment-tbl th:nth-child(1), #owned-equipment-tbl td:nth-child(1) { width: 20px; }
+    #owned-equipment-tbl th:nth-child(2), #owned-equipment-tbl td:nth-child(2) { width: 20px; }
+    #owned-equipment-tbl th:nth-child(3), #owned-equipment-tbl td:nth-child(3) { width: 150px; }
+    #owned-equipment-tbl th:nth-child(4), #owned-equipment-tbl td:nth-child(4) { width: auto; }
+    #owned-equipment-tbl th:nth-child(5), #owned-equipment-tbl td:nth-child(5) { width: 140px; }
+    #owned-equipment-tbl th:nth-child(6), #owned-equipment-tbl td:nth-child(6) { width: 30px; }
+
+    #customer-tbl, #tel-tbl, #address-tbl, .disclaimer-tbl {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0;
+    }
+
+    #customer-tbl th, #customer-tbl td,
+    #tel-tbl th, #tel-tbl td,
+    #address-tbl th, #address-tbl td,
+    .disclaimer-tbl th, .disclaimer-tbl td {
+      border: 1px solid black;
+      vertical-align: middle;
+    }
+
+    #customer-tbl th, #tel-tbl th, #address-tbl th, .disclaimer-tbl th {
+      background-color: #f7f7f7;
+      text-align: center;
+      border-top: none;
+      border-left: none;
+    }
+
+    #customer-tbl td, #tel-tbl td, #address-tbl td, .disclaimer-tbl td {
+      border-top: none;
+      border-right: none;
+    }
+
+    #customer-tbl th, #address-tbl th {
+      width: 70px !important;
+    }
+
+    #customer-tbl {
+      flex: 1;
+      border: 1px solid black;
+      border-bottom: none;
+      border-right: none;
+    }
+
+    #customer-tbl tr.furigana-row th {
+      border-top: none !important;
+      border-left: 1px solid black !important;
+      border-right: 1px solid black !important;
+      border-bottom: none !important;
+      font-size: 9px;
+      font-weight: normal;
+      color: #666;
+      padding: 0 2px !important;
+      height: 12px;
+      line-height: 1;
+    }
+    #customer-tbl tr.furigana-row td {
+      border-top: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid #ccc !important;
+      padding: 0 4px !important;
+      height: 12px;
+      line-height: 1;
+    }
+    .furigana-input {
+      width: 100%;
+      font-size: 9px;
+      min-height: 12px;
+    }
+
+    #customer-tbl tr.name-row th {
+      border-top: none !important;
+      border-left: 1px solid black !important;
+      border-right: 1px solid black !important;
+      border-bottom: 1px solid black !important;
+      padding: 2px 8px !important;
+      height: 24px;
+    }
+    #customer-tbl tr.name-row td {
+      border-top: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid black !important;
+      height: 24px;
+      padding: 2px 8px !important;
+    }
+    .name-input-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .name-cell {
+      min-height: 18px;
+    }
+    .sama-text {
+      padding-left: 8px;
+      font-weight: normal;
+    }
+
+    #tel-tbl {
+      width: 240px;
+      border: 1px solid black;
+      border-bottom: none;
+      border-left: none;
+    }
+    #tel-tbl th {
+      width: 45px;
+      border-top: none !important;
+      border-right: none !important;
+      border-left: 1px solid black !important;
+      padding: 0 6px !important;
+    }
+    #tel-tbl td {
+      border-top: none !important;
+      border-right: 1px solid black !important;
+      padding: 0 8px !important;
+    }
+    #tel-tbl tr:nth-child(1) th,
+    #tel-tbl tr:nth-child(1) td {
+      height: 12px !important;
+      border-top: none !important;
+      border-bottom: 1px solid black !important;
+    }
+    #tel-tbl tr:nth-child(2) th,
+    #tel-tbl tr:nth-child(2) td {
+      height: 24px !important;
+      border-top: none !important;
+      border-bottom: 1px solid black !important;
+    }
+
+    #address-tbl {
+      border: 1px solid black;
+      border-top: 1px solid black;
+      border-bottom: none;
+      margin-top: 2px;
+      margin-bottom: 1px;
+    }
+    #address-tbl th {
+      vertical-align: middle;
+      text-align: center;
+      border-top: 1px solid black !important;
+      border-left: 1px solid black !important;
+      border-right: 1px solid black !important;
+      border-bottom: 1px solid black !important;
+      background-color: #f7f7f7;
+    }
+
+    #address-tbl tr.zip-row th {
+      height: 8px !important;
+      padding: 0 8px !important;
+    }
+    #address-tbl tr.zip-row td {
+      height: 8px !important;
+      padding: 0 8px !important;
+      border-top: 1px solid black !important;
+      border-bottom: none !important;
+      border-right: 1px solid black !important;
+    }
+    .zip-input-wrapper {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      min-height: 12px;
+      padding-top: 1px;
+    }
+    .zip-symbol {
+      user-select: none;
+      font-weight: normal;
+      margin-right: 4px;
+      line-height: 1;
+    }
+    #zip-input {
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    #address-tbl tr.street-row th {
+      padding: 4px 8px;
+    }
+    #address-tbl tr.street-row td {
+      border-top: none !important; 
+      border-bottom: 1px solid black !important;
+      border-right: 1px solid black !important;
+      padding: 4px 8px;
+      min-height: 22px;
+    }
+
+    .disclaimer-tbl {
+      margin-top: 2px;
+      margin-bottom: 1px;
+      border: 1px solid black;
+    }
+    .disclaimer-tbl th {
+      font-size: 8px;
+      line-height: 1.1;
+      padding: 0;
+      border-top: none;
+      border-left: none;
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+    }
+    .disclaimer-tbl th:nth-child(2) {
+      width: 50px;
+      border-top: none;
+      border-left: 1px solid black;
+      border-right: none;
+      border-bottom: 1px solid black;
+      text-align: center;
+    } 
+    .disclaimer-tbl td {
+      font-size: 8px;
+      padding: 1px 3px;
+      line-height: 1.2;
+      border-top: none;
+      border-left: none;
+      border-right: 1px solid black;
+      border-bottom: none;
+      text-align: left;
+    }
+    .disclaimer-tbl td:nth-child(2) {
+      border-right: none;
+      text-align: center;
+    }
+
+    /* カスタムコンテキストメニューのスタイル */
+    .custom-context-menu {
+      display: none;
+      position: absolute;
+      z-index: 2000;
+      background: #fff;
+      border: 1px solid #767676;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      font-size: 11px;
+      min-width: 180px;
+      padding: 2px 0;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    .custom-context-menu .menu-item {
+      padding: 5px 12px;
+      cursor: pointer;
+    }
+    .custom-context-menu .menu-item:hover, .custom-context-menu .menu-item.selected-item {
+      background-color: #e6f0ff;
+    }
+    .custom-context-menu .menu-item.selected-item::before {
+      content: "✓ ";
+      font-weight: bold;
+      color: #007bff;
+    }
+    .custom-context-menu .menu-separator {
+      height: 1px;
+      background-color: #ccc;
+      margin: 2px 0;
+    }
+    .coupon-memo {
+      font-size: 9px;
+      color: #666;
+      margin-top: 1px;
+    }
+    .menu-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
+      font-weight: bold;
+    }
+    .apply-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 2px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .apply-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* ドラッグハンドルのカーソル指定（No部分をつまめるようにする） */
+    .row-no, .posa-no, .work-no, .owned-no {
+        cursor: grab;
+        user-select: none;
+    }
+    .row-no:active, .posa-no:active, .work-no:active, .owned-no:active {
+        cursor: grabbing;
+    }
+    /* ドラッグ中の行の見た目 */
+    .sortable-ghost {
+        opacity: 0.4;
+        background-color: #c8ebfb !important;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #product-tbl th:nth-child(9),
+        #product-tbl td:nth-child(9) {
+            display: none !important;
+        }
+        th.no-border,
+        td.no-border,
+        button,
+        .sticky-header {
+            display: none !important;
+        }
+    }
+  </style>
 </head>
 <body>
-<main class="main-container">
-<!--  <h1 contenteditable="true">商談メモ：別紙</h1>  -->  
-  <div class="flex-container">
-        <h4 contenteditable="true">パソコン・デジタルサポート商談メモ</h4>
-        <div>
-            <table id="sales-info-tbl">
-                <tr>
-                <th>受付日</th>
-                <th>AC担当者</th>
-                <th>販売担当者</th>
-                <th class="space-col"></th><th>案件番号</th>
-                </tr>
-                <tr>
-                <td id="sales-date" contenteditable="true">/</td>  
-                <td contenteditable="true">
-                    <select>
-                        <option>杉本</option>
-                        <option>石山</option>
-                    </select>
-                </td>
-                <td contenteditable="true">
-                    <select>
-                        <option>鴨下</option>
-                        <option>熊谷</option>
-                        <option>青葉</option>
-                        <option>遠藤片柳</option>
-                        <option>片柳</option>
-                        <option>金澤</option>
-                        <option>柴山</option>
-                        <option>中世古</option>
-                        <option>佐々木</option>
-                    </select>
 
-                </td>
-                <td  class="space-col"></td>
-                <td contenteditable="true"></td>
-                </tr>
-            </table>
-        </div>
-    </div>
+  <div class="sticky-header">
+      <button id="product-list">商品</button>
+      <button id="measure-btn">施策</button>
+      <button id="support-menu-btn">サポート</button>
+      <button id="print-btn">印刷</button>
+      <div style="margin-left: 30px; display: inline-flex; gap: 6px;">
+          <button id="save-btn">保存</button>
+          <button id="load-btn">読込</button>
+      </div>
+  </div>
+
+  <div class="header-container">
+    <h1>パソコン・デジタルサポート商談メモ</h1>
     
-    <div class="customer-info-container">
-        <table id="customer-tbl">
-            <tr>
-                <th class="bottom-line-dotted">フリガナ</th>
-                <td id="customer-tbl_fujigana-1" class="bottom-line-dotted" contenteditable="true"></td>
-                <td id="customer-tbl_fujigana-2"class="bottom-line-dotted" ></td>
-            </tr>
-            <tr>
-                <th class="upper-line-dotted">お名前</th>
-                <td id="customer-tbl_name-1" class="upper-line-dotted" contenteditable="true"></td>
-                <td id="customer-tbl_name-2" class="upper-line-dotted">様</td>
-            </tr>
-            <tr>
-                <th>ご住所</th>
-                <td id="customer-tbl_address-1" contenteditable="true">〒　　　-　　　　</td>
-                <td id="customer-tbl_address-2"></td>
-                
-            </tr>
-        </table>
+    <div class="meta-tables-wrapper">
+      <table id="meta-group-tbl" class="meta-info-tbl">
+        <tr>
+          <th>受付日</th>
+          <th>販売担当</th>
+          <th>AC担当</th>
+        </tr>
+        <tr>
+          <td class="editable-cell" id="reception-date-cell" contenteditable="true"></td>
+          <td class="editable-cell" contenteditable="true"></td>
+          <td class="editable-cell" contenteditable="true"></td>
+        </tr>
+      </table>
 
-        <table id="tel-fax-tbl">
-            <tr>
-                <th rowspan="3">T<br>E<br>L</th>
-                <td>優先</td>
-                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
-            </tr>
-            <tr>
-                <td>第二</td>
-                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
-            </tr>
-            <tr>
-                <td>FAX</td>
-                <td class="tel-td" contenteditable="true">-　　　　　-　　　　　　　　　</td>
-            </tr>
-        </table>
+      <table id="meta-case-tbl" class="meta-info-tbl">
+        <tr>
+          <th>案件番号</th>
+        </tr>
+        <tr>
+          <td class="editable-cell" contenteditable="true"></td>
+        </tr>
+      </table>
     </div>
+  </div>
 
-    <div class="disclaimer-div">
-        <table class="disclaimer-tbl">
-        <tr>
-            <th>免責事項</th>
-            <th>お客様説明</th>
-        </tr>
-        <tr>
-            <td>
-                ケーズデンキに作業を依頼する場合、プログラム、データ、ソフトウェア等の損傷や喪失についてはケーズデンキの過失の有無を問わず
-                いかなる場合においてもケーズデンキはその責を負わないこととします。パソコン内にある機密情報(パスワード含む)はお客様の責任で消去してください。
-                それらの機密漏洩に関してケーズデンキは一切その責を負わないものとします。
-            </td>
-            <td>
-                説明後✓<br>済 ▢
-            </td>
-        </tr>
-        </table>
-    </div>
+  <div class="customer-top-row">
+    <table id="customer-tbl">
+      <tr class="furigana-row">
+        <th>フリガナ</th>
+        <td><div class="editable-cell furigana-input" contenteditable="true" lang="ja"></div></td>
+      </tr>
+      <tr class="name-row">
+        <th>お名前</th>
+        <td>
+          <div class="name-input-wrapper">
+            <div class="editable-cell name-cell" contenteditable="true" lang="ja"></div>
+            <span class="sama-text">様</span>
+          </div>
+        </td>
+      </tr>
+    </table>
 
-    <table id="delivery-info-tbl">
-        <tr>
-            <th>出庫区分</th>
-            <th>作業種別</th>
-            <th>訪問日/店頭お渡し日</th>
-            <th>お時間</th>
-            <th>お届け品</th>
-            <th>アカウント用紙</th>
-        </tr>
-        <tr>
-            <td>
-                <select>
-                    <option value="持帰">0:持帰</option>
-                    <option value="後来" selected>1:後来</option>
-                    <option value="自配">2:自配</option>
-                    <option value="セ配">3:セ配</option>
-                    <option value="他来">4:他来</option>
-                    <option value="宅配">5:宅配</option>
-                </select>
-            </td>
-            <td>
-                <select>
+    <table id="tel-tbl">
+      <tr>
+        <th>携帯</th>
+        <td class="editable-cell tel-input" contenteditable="true" inputmode="numeric" lang="en"></td>
+      </tr>
+      <tr>
+        <th>電話</th>
+        <td class="editable-cell tel-input" contenteditable="true" inputmode="numeric" lang="en"></td>
+      </tr>
+    </table>
+  </div>
+
+  <table id="address-tbl">
+    <tr class="zip-row">
+      <th rowspan="2">ご住所</th>
+      <td>
+        <div class="zip-input-wrapper">
+          <span class="zip-symbol">〒</span>
+          <div class="editable-cell" id="zip-input" contenteditable="true" inputmode="numeric" lang="en"></div>
+        </div>
+      </td>
+    </tr>
+    <tr class="street-row">
+      <td class="editable-cell" id="address-input" contenteditable="true" lang="ja"></td>
+    </tr>
+  </table>
+
+  <table class="disclaimer-tbl">
+    <tr>
+      <th>免責事項</th>
+      <th>お客様説明</th>
+    </tr>
+    <tr>
+      <td>
+        ケーズデンキに作業を依頼する場合、プログラム、データ、ソフトウェア等の損傷や喪失についてはケーズデンキの過失の有無を問わず
+        いかなる場合においてもケーズデンキはその責を負わないこととします。パソコン内にある機密情報(パスワード含む)はお客様の責任で消去してください。
+        それらの機密漏洩に関してケーズデンキは一切その責を負わないものとします。
+      </td>
+      <td class="editable-cell" contenteditable="true">説明後✓<br>済 ▢</td>
+    </tr>
+  </table>
+
+  <!-- 追加された配信・配送情報テーブル -->
+  <table id="delivery-info-tbl">
+    <tr>
+        <th>出庫区分</th>
+        <th>作業種別</th>
+        <th>訪問日/店頭お渡し日</th>
+        <th>お時間</th>
+        <th>お届け品</th>
+        <th>アカウント用紙</th>
+    </tr>
+    <tr>
+        <td>
+            <select>
+                <option value="持帰">0:持帰</option>
+                <option value="後来" selected>1:後来</option>
+                <option value="自配">2:自配</option>
+                <option value="セ配">3:セ配</option>
+                <option value="他来">4:他来</option>
+                <option value="宅配">5:宅配</option>
+            </select>
+        </td>
+        <td>
+            <select>
                 <option value=""></option>
                 <option value="出張">出張</option>
-                <option value="店頭"  selected>店頭</option>
-                </select>
-            </td>
-            <td contenteditable="true">
-                
-            </td>
-            <td contenteditable="true">
-                
-            </td>
+                <option value="店頭" selected>店頭</option>
+            </select>
+        </td>
+        <td contenteditable="true" id="visit-date-cell" style="cursor: pointer;">
             
-            <td> 
-                <select>
+        </td>
+        <td contenteditable="true" id="visit-time-cell" style="cursor: pointer;">
+            
+        </td>
+        <td>  
+            <select>
                 <option value=""></option>    
                 <option value="あり">あり</option>
                 <option value="なし">なし</option>
-                </select>
-            </td>
-            <td> 
-                <select>
+            </select>
+        </td>
+        <td>  
+            <select>
                 <option value=""></option>    
                 <option value="あり">あり</option>
                 <option value="なし">なし</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <!-- 商品テーブル -->
-    <table id="product-tbl">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>型番</th>
-            <th>数量</th>
-            <th>単価</th>
-            <th>金額</th>
-            <th>保証</th>
-            <th>商品<br>状態</th>
-            <th>出庫</th>
-            <th>在庫店<br>コード</th>
-            <th>在庫<br>情報</th>
-            <th>発注</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="product-tbody">
-            <tr id="product-row-template" data-row-id="row-template" style="display: none;">
-              <td class="row-no"></td>
-              <td class="product-type" contenteditable="true"></td>
-              <td class="quantity" contenteditable="true" inputmode="numeric"></td>
-              <td class="price" contenteditable="true" inputmode="numeric"></td>
-              <td class="total" data-readonly></td>
-              <td><button class="toggle-warranty-btn">延保</button></td>
-              <td>
-                <select name="product-status">
-                  <option value="00">00</option>
-                  <option value="展示">展示</option>
-                </select>
-              </td>
-              <td>
-                <select name="outbound-type">
-                  <option value="持帰">0:持帰</option>
-                  <option value="後来" selected>1:後来</option>
-                  <option value="自配">2:自配</option>
-                  <option value="セ配">3:セ配</option>
-                  <option value="他来">4:他来</option>
-                  <option value="宅配">5:宅配</option>
-                </select>
-              </td>
-              <td class="stock-code" contenteditable="true" inputmode="numeric">1284</td>
-              <td>
-                <select name="stock-info-type">
-                  <option value="1">1:移動</option>
-                  <option value="2">2:仕入</option>
-                  <option value="3" selected>3:在庫</option>
-                  <option value="4">4:仕移</option>
-                  <option value="6">6:D移</option>
-                  <option value="9">9:D仕</option>
-                </select>
-              </td>
-              <td>
-                <select name="order-type">
-                  <option value=""></option>
-                  <option value="持帰">〇本</option>
-                  <option value="後来">△緊</option>
-                </select>
-              </td>
-              <td class="posa-flag">0</td>
-              <td><button class="delete-product-btn">削除</button></td>
-            </tr>
-        </tbody>
-    </table>
+            </select>
+        </td>
+    </tr>
+  </table>
 
-    <button id="add-product-btn">追加</button>
-    <button class="open-modal-btn" data-modal-id="product-modal">商品</button>
-    <button class="open-modal-btn" data-modal-id="virus-modal">ウイルス対策</button>
-    <button class="open-modal-btn" data-modal-id="sale-modal">施策</button>
-    <button class="open-modal-btn" data-modal-id="warranty-modal">メーカ保証</button>
-
-    <div id="work-container">
-    <!-- 作業テーブル -->
-    <table id="work-tbl">
-        <thead>
-          <tr>
-            <th>No</th><th></th><th>作業内容</th><th>JAN</th><th>バーコード</th><th>数量</th><th>単価</th><th>金額</th>
-          </tr>
-        </thead>
-        <tbody id="work-rows">
-            <tr id="work-row-template" class="work-row" style="display: none;">
-                <td class="work-no row-no"></td>
-                <td class="work-code"></td>
-                <td class="work-item"></td>
-                <td class="work-janCode"></td>
-                <td class="work-barCode"><svg class="barcode-svg"></svg></td>
-                <td class="work-quantity" contenteditable="true" inputmode="numeric"></td>
-                <td class="work-price" contenteditable="true" inputmode="numeric"></td>
-                <td class="work-lineTotal"></td>
-                
-                <td style="border: none;"><button class="delete-work-btn">削除</button></td>
+  <div class="normal-group">
+      <h3 id="normal-group-title" style="display: none;">【 会計①：通常商品 ＋ 作業 】</h3>
+      
+      <table id="product-tbl">
+          <thead>
+            <tr>
+              <th class="no-border"></th>
+              <th>No</th>
+              <th>型番</th>
+              <th>JAN</th>
+              <th>バーコード</th>
+              <th>数量</th>
+              <th>単価</th>
+              <th>金額</th>
+              <th>保証</th>
+              <th>商品<br>状態</th>
+              <th>出庫</th>
+              <th>在庫店<br>コード</th>
+              <th>在庫<br>情報</th>
+              <th>発注</th>
+              <th class="no-border"></th>
             </tr>
-        </tbody>
-    </table>
-    <table id="estimate-total-tbl" class="collapsing-border-table">
-            <tbody>
-                <tr>
-                    <th id="uchiwake-th"></th>
-                    <th>お買上合計(税込)</th>
-                    <th id="grand-total-val">0円</th>
-                </tr>
-                <tr>
-                    <br>
-                    <td class="space"></td>
-                    <td >商品合計:</td>
-                    <td id="product-total-val">0円</td>
-                </tr>
-                <tr>
-                    <td class="space">内</td>
-                    <td>作業合計:</td>
-                    <td id="work-total-val">0円</td>
-                </tr>
-                <tr>
-                    <td class="space">訳</td>
-                    <td>小 計:</td>
-                    <td id="subtotal-val">0円</td>
-                </tr>
-                <tr>
-                    <td class="space"></td>
-                    <td>POSA(別会計):</td>
-                    <td id="posa-total-val">0円</td>
-                </tr>
-            </tbody>
-    </table>
+          </thead>
+          <tbody id="product-tbody">
+              <tr id="product-row-template" class="product-row" style="display: none;">
+                  <td class="no-border add-btn-cell"></td>
+                  <td class="row-no"></td>
+                  <td class="product-type" contenteditable="true"></td>
+                  <td class="jan-cell"></td>  
+                  <td><svg class="barcode-svg"></svg></td>  
+                  <td class="quantity" contenteditable="true" inputmode="numeric">1</td>
+                  <td class="price" contenteditable="true" inputmode="numeric"></td>
+                  <td class="total" data-readonly></td>
+                  <td>
+                    <select name="warranty-select" class="warranty-select">
+                      <option value="" selected></option>
+                      <option value="加入">加入</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select name="product-status">
+                      <option value="00">00</option>
+                      <option value="展示">展示</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select name="outbound-type">
+                      <option value="持帰">0:持帰</option>
+                      <option value="後来" selected>1:後来</option>
+                      <option value="自配">2:自配</option>
+                      <option value="セ配">3:セ配</option>
+                      <option value="他来">4:他来</option>
+                      <option value="宅配">5:宅配</option>
+                    </select>
+                  </td>
+                  <td class="stock-code" contenteditable="true" inputmode="numeric">1284</td>
+                  <td>
+                    <select name="stock-info-type">
+                      <option value="1">1:移動</option>
+                      <option value="2">2:仕入</option>
+                      <option value="3" selected>3:在庫</option>
+                      <option value="4">4:仕移</option>
+                      <option value="6">6:D移</option>
+                      <option value="9">9:D仕</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select name="order-type">
+                      <option value=""></option>
+                      <option value="持帰">〇本</option>
+                      <option value="後来">△緊</option>
+                    </select>
+                  </td>
+                  <td class="no-border"><button class="delete-btn-circle delete-product-btn" title="削除">×</button></td>
+              </tr>
+          </tbody>
+      </table>
+      <div class="table-subtotal">商品小計: <span id="product-subtotal">0</span> 円</div>
+
+      <table id="work-tbl">
+          <thead>
+            <tr>
+              <th class="no-border"></th>
+              <th>No</th>
+              <th>社内コード</th>
+              <th>作業内容</th>
+              <th>JAN</th>
+              <th>バーコード</th>
+              <th>数量</th>
+              <th>単価</th>
+              <th>金額</th>
+              <th class="no-border"></th>
+            </tr>
+          </thead>
+          <tbody id="work-rows">
+              <tr id="work-row-template" class="work-row" style="display: none;">
+                  <td class="no-border work-add-btn-cell"></td>
+                  <td class="work-no row-no"></td>
+                  <td class="work-code"></td>
+                  <td class="work-item" contenteditable="true"></td>
+                  <td class="work-janCode"></td>
+                  <td class="work-barCode"><svg class="barcode-svg"></svg></td>
+                  <td class="work-quantity" contenteditable="true" inputmode="numeric">1</td>
+                  <td class="work-price" contenteditable="true" inputmode="numeric"></td>
+                  <td class="work-lineTotal"></td>
+                  <td class="no-border"><button class="delete-btn-circle delete-work-btn" title="削除">×</button></td>
+              </tr>
+          </tbody>
+      </table>
+      <div class="table-subtotal">作業小計: <span id="work-subtotal">0</span> 円</div>
+  </div>
+
+  <div id="posa-section" class="posa-group">
+      <h3>【 会計②：POSAカード（※別会計となります） 】</h3>
+      
+      <table id="posa-tbl">
+          <thead>
+            <tr>
+              <th class="no-border"></th>
+              <th>No</th>
+              <th>型番</th>
+              <th>数量</th>
+              <th>単価</th>
+              <th>金額</th>
+              <th class="no-border"></th>
+            </tr>
+          </thead>
+          <tbody id="posa-rows">
+              <tr id="posa-row-template" class="posa-row" style="display: none;">
+                  <td class="no-border posa-add-btn-cell"></td>
+                  <td class="posa-no row-no"></td>
+                  <td class="posa-type" contenteditable="true"></td>
+                  <td class="posa-quantity" contenteditable="true" inputmode="numeric">1</td>
+                  <td class="posa-price" contenteditable="true" inputmode="numeric"></td>
+                  <td class="posa-lineTotal"></td>
+                  <td class="no-border"><button class="delete-btn-circle delete-posa-btn" title="削除">×</button></td>
+              </tr>
+          </tbody>
+      </table>
+      <div class="table-subtotal">POSA小計: <span id="posa-subtotal">0</span> 円</div>
+  </div>
+
+  <div class="grand-total-container">
+      <div id="normal-total-display-line" class="subtotal-row" style="display: none;">
+          <span class="label">会計①（商品＋作業）</span>
+          <span class="sub-label">小計:</span>
+          <span class="amount-wrap"><span id="normal-subtotal-display">0</span> 円</span>
+      </div>
+      <div id="posa-total-display-line" class="subtotal-row" style="display: none;">
+          <span class="label">会計②（POSAカード）</span>
+          <span class="sub-label">小計:</span>
+          <span class="amount-wrap"><span id="posa-subtotal-display">0</span> 円</span>
+      </div>
+      <div id="total-divider-line" style="display: none; width: 100%; border-top: 1px solid black; margin: 1px 0;"></div>
+      <div style="font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px; width: 100%; text-align: right; line-height: 1.1;">
+          お買上合計: <span id="grand-total">0</span> 円
+      </div>
+  </div>
+
+  <div class="normal-group">
+      <table id="owned-equipment-tbl">
+          <thead>
+              <tr>
+                  <th class="no-border"></th>
+                  <th>No</th>
+                  <th>種類</th>
+                  <th>お客様所有の製品型番</th>
+                  <th>シリアルナンバー</th>
+                  <th class="no-border"></th>
+              </tr>
+          </thead>
+          <tbody id="owned-equipment-tbody">
+              <tr id="owned-equipment-row-template" class="owned-equipment-row" style="display: none;">
+                  <td class="no-border owned-add-btn-cell"></td>
+                  <td class="owned-no row-no"></td>
+                  <td class="owned-equipment-type" contenteditable="true"></td>
+                  <td class="product-model-cell" contenteditable="true"></td>
+                  <td class="owned-serial-cell" contenteditable="true"></td>
+                  <td class="no-border"><button class="delete-btn-circle delete-owned-btn" title="削除">×</button></td>
+              </tr>
+          </tbody>
+      </table>
+
+      <div class="no-break-div">
+          <span class="section-title">お客様とのお約束事項(別紙入力)</span>
+          <table class="besshi-tbl">
+              <tr><td contenteditable="true">2Fアシストカウンターにてお渡しいたします。<br><br></td></tr>
+          </table>
+      </div>        
+
+      <div class="no-break-div">
+          <span class="section-title">社内伝達事項</span>
+          <table class="besshi-tbl">
+              <tr><td contenteditable="true">▢初期設定 MSA【▢新規・▢既存(▢outlook.jp・▢その他メール)】 ▢２段階認証【▢お渡し時・▢メール・▢電話】<br>
+                  ▢RD作成 ▢Office認証、▢Windowsアップデート ▢メーカーアップデート<br>
+                  ウイルス対策(▢VBTS ▢Mcafee ユーザー登録【▢新規MSA・▢既存】)<br>
+                  作業担当：▢AC・▢協力店(170)担当(719)</td></tr>
+          </table>
+      </div>
+  </div>
+
+  <!-- 商品選択モーダル -->
+  <div id="product-modal" class="modal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3>商品選択</h3>
+              <button class="close-btn" id="close-modal">&times;</button>
+          </div>
+          <div class="filter-container">
+              <div class="filter-row">
+                  <label>キーワード検索: <input type="search" id="search-keyword" placeholder="型番/インストア"></label>
+              </div>
+              <div class="filter-row">
+                  <span>名称フィルター:</span>
+                  <div id="name-radios"></div>
+              </div>
+          </div>
+          <div class="modal-body">
+              <table id="modal-table">
+                  <thead>
+                      <tr>
+                          <th>名称</th>
+                          <th>メーカー</th>
+                          <th>型番</th>
+                          <th>ｲﾝｽﾄｱｺｰﾄﾞ</th>
+                          <th>ケーズ売価</th>
+                          <th>JANｺｰﾄﾞ</th>
+                          <th>備考</th>
+                      </tr>
+                  </thead>
+                  <tbody id="modal-tbody"></tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+  <!-- 施策選択モーダル -->
+  <div id="measure-modal" class="modal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3>施策選択</h3>
+              <button class="close-btn" id="close-measure-modal">&times;</button>
+          </div>
+          <div class="filter-container">
+              <div class="filter-row">
+                  <label>キーワード検索: <input type="search" id="measure-search-keyword" placeholder="施策名/インストアコード"></label>
+              </div>
+          </div>
+          <div class="modal-body">
+              <table id="measure-modal-table">
+                  <thead>
+                      <tr>
+                          <th>施策名</th>
+                          <th>ｲﾝｽﾄｱｺｰﾄﾞ</th>
+                          <th>JANｺｰﾄﾞ</th>
+                          <th>単価</th>
+                          <th>開始日</th>
+                          <th>終了日</th>
+                      </tr>
+                  </thead>
+                  <tbody id="measure-modal-tbody"></tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+  <!-- サポートメニュー選択モーダル -->
+  <div id="support-modal" class="modal">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3>サポートメニュー選択</h3>
+              <button class="close-btn" id="close-support-modal">&times;</button>
+          </div>
+          <div class="filter-container">
+              <div class="filter-row">
+                  <div style="flex: 1;">
+                      <input type="search" id="support-searchInput" placeholder="キーワードで絞り込み..." style="width: 100%; padding: 2px 4px; font-size: 11px;">
+                  </div>
+                  <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11px;">
+                      <input type="checkbox" id="support-includeDetailsCheckbox">
+                      <span>詳細を含む</span>
+                  </label>
+              </div>
+              <div id="support-statusMessage" style="font-size: 10px; color: #666;">読み込み中...</div>
+          </div>
+          <div class="modal-body">
+              <table id="support-modal-table" style="width: 100%; border-collapse: collapse;">
+                  <thead id="support-table-header" class="bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider" style="position: sticky; top: 0;">
+                      <!-- 動的生成 -->
+                  </thead>
+                  <tbody id="support-modal-tbody" class="divide-y divide-slate-200 text-sm bg-white">
+                      <!-- 動的生成 -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+
+  <!-- イベント値引用コンテキストメニュー -->
+  <div id="event-discount-menu" class="custom-context-menu">
+    <div class="menu-header-row">
+      <span>イベント値引き</span>
+      <button class="apply-btn" id="apply-discount-btn">適用</button>
     </div>
-    
-    <button class="open-modal-btn" data-modal-id="support-menu-modal">サポートメニュー</button>
-    
-    
-        <table id="owned-equipment-tbl" class="collapsing-border-table">
-            <th>No</th>
-            <th>種類</th>
-            <th>お客様所有の製品型番</th>
-            <th>シリアルナンバー</th>
-            <tr>
-                <td>1</td>
-                <td class="owned-equipment-type" contenteditable="true">
-                    
-                    
-                </td>
-                <td class="product-model-cell" contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td class="owned-equipment-type" contenteditable="true"></td>
-                <td class="product-model-cell" contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td class="owned-equipment-type" contenteditable="true"></td>
-                <td class="product-model-cell" contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td class="owned-equipment-type" contenteditable="true"></td>
-                <td class="product-model-cell" contenteditable="true"></td>
-                <td contenteditable="true"></td>
-            </tr>
-        </table>
-    
+    <div style="padding: 3px 12px; font-weight: bold; background: #f0f0f0; border-bottom: 1px solid #ccc;">％値引き</div>
+    <div class="menu-item" data-discount-type="percent" data-value="5">5％値引き</div>
+    <div class="menu-item" data-discount-type="percent" data-value="10">10％値引き</div>
+    <div class="menu-separator"></div>
+    <div style="padding: 3px 12px; font-weight: bold; background: #f0f0f0; border-bottom: 1px solid #ccc;">クーポン値引き</div>
+    <div id="coupon-menu-items"></div>
+  </div>
+
+  <!-- 訪問日用隠し日付ピッカー -->
+  <input type="date" id="visit-date-picker" style="display: none; position: absolute;">
+
+  <!-- 時間選択モーダル -->
+  <div id="time-modal" class="modal">
+    <div class="modal-content" style="max-width: 300px;">
+      <div class="modal-header">
+        <h3>訪問時間の選択</h3>
+        <button class="close-btn" id="close-time-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 10px;">
+        <select id="time-select" style="width: 100%; padding: 5px; font-size: 14px; border: 1px solid #ccc;">
+          <option value="">時間を選択してください</option>
+          <option value="11時">11時</option>
+          <option value="12時">12時</option>
+          <option value="13時">13時</option>
+          <option value="14時">14時</option>
+          <option value="15時">15時</option>
+          <option value="16時">16時</option>
+          <option value="17時">17時</option>
+          <option value="18時">18時</option>
+          <option value="19時">19時</option>
+        </select>
+        <button id="time-submit-btn" class="apply-btn" style="width: 100%; margin-top: 10px; padding: 6px;">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 印刷処理
+    document.getElementById('print-btn').addEventListener('click', () => {
+        window.print();
+    });
+
+    // 受付日に本日の日付（M/D形式）を自動挿入
+    window.addEventListener('DOMContentLoaded', () => {
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const dateStr = `${month}/${day}`;
+        document.getElementById('reception-date-cell').innerText = dateStr;
+    });
+
+    // 新規追加された配信情報テーブルの訪問日・お時間のクリック操作設定
+    const visitDateCell = document.getElementById('visit-date-cell');
+    const visitTimeCell = document.getElementById('visit-time-cell');
+    const visitDatePicker = document.getElementById('visit-date-picker');
+    const timeModal = document.getElementById('time-modal');
+    const closeTimeModal = document.getElementById('close-time-modal');
+    const timeSelect = document.getElementById('time-select');
+    const timeSubmitBtn = document.getElementById('time-submit-btn');
+
+    visitDateCell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        visitDatePicker.style.left = `${e.pageX}px`;
+        visitDatePicker.style.top = `${e.pageY}px`;
+        if (visitDatePicker.showPicker) {
+            visitDatePicker.showPicker();
+        } else {
+            visitDatePicker.click();
+        }
+    });
+
+    visitDatePicker.addEventListener('change', (e) => {
+        if (e.target.value) {
+            const parts = e.target.value.split('-');
+            if (parts.length === 3) {
+                const m = parseInt(parts[1], 10);
+                const d = parseInt(parts[2], 10);
+                visitDateCell.innerText = `${m}/${d}`;
+            }
+        }
+    });
+
+    visitTimeCell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        timeModal.style.display = 'block';
+    });
+
+    closeTimeModal.addEventListener('click', () => {
+        timeModal.style.display = 'none';
+    });
+
+    timeSubmitBtn.addEventListener('click', () => {
+        if (timeSelect.value) {
+            visitTimeCell.innerText = timeSelect.value;
+            timeModal.style.display = 'none';
+        }
+    });
+
+    // 郵便番号自動検索
+    const zipInput = document.getElementById('zip-input');
+    const addressInput = document.getElementById('address-input');
+
+    zipInput.addEventListener('input', () => {
+      const text = zipInput.innerText;
+      const zipCode = text.replace(/[^0-9]/g, '');
+
+      if (zipCode.length === 7) {
+        fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zipCode}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.results) {
+              const res = data.results[0];
+              zipInput.innerText = zipCode.slice(0, 3) + '-' + zipCode.slice(3);
+              addressInput.innerText = `${res.address1}${res.address2}${res.address3}`;
+              
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.selectNodeContents(addressInput);
+              range.collapse(false);
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+          })
+          .catch(err => {
+            console.error('住所の取得に失敗しました', err);
+          });
+      }
+    });
+
+    // 電話番号フォーマット
+    const telInputs = document.querySelectorAll('.tel-input');
+    telInputs.forEach(cell => {
+      cell.addEventListener('blur', () => {
+        let text = cell.innerText.replace(/[^0-9]/g, '');
+
+        if (text.length === 11) {
+          cell.innerText = text.slice(0, 3) + '-' + text.slice(3, 7) + '-' + text.slice(7);
+        } else if (text.length === 10) {
+          if (text.startsWith('03') || text.startsWith('06')) {
+            cell.innerText = text.slice(0, 2) + '-' + text.slice(2, 6) + '-' + text.slice(6);
+          } else {
+            cell.innerText = text.slice(0, 3) + '-' + text.slice(3, 6) + '-' + text.slice(6);
+          }
+        }
+      });
+    });
+
+    // ==========================================
+    // イベント値引機能のロジック
+    // ==========================================
+    let couponList = [];
+    let currentActiveRow = null; 
+    let selectedTempCoupon = null;
+    let selectedTempPercent = null;
+
+    // event-discount.csv の読み込み
+    function loadEventDiscounts() {
+        if (couponList.length === 0) {
+            Papa.parse('event-discount.csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    couponList = results.data.map(item => {
+                        const clean = {};
+                        Object.keys(item).forEach(k => {
+                            clean[k.trim()] = item[k] !== undefined ? String(item[k]).trim() : '';
+                        });
+                        return clean;
+                    }).filter(c => c['イベント値引'] || c['単価'] || c['クーポン名'] || c['名称']);
+                    buildCouponMenuItems();
+                },
+                error: function(err) {
+                    console.error('event-discount.csvの読み込みに失敗しました:', err);
+                }
+            });
+        }
+    }
+    loadEventDiscounts();
+
+    function buildCouponMenuItems() {
+        const container = document.getElementById('coupon-menu-items');
+        container.innerHTML = '';
+        if (couponList.length === 0) {
+            container.innerHTML = '<div style="padding: 4px 12px; color: #666;">クーポンなし</div>';
+            return;
+        }
+        couponList.forEach(c => {
+            const name = c['イベント値引'] || c['クーポン名'] || c['名称'] || 'クーポン';
+            const rawVal = c['単価'] || c['割引額'] || c['値引き額'] || c['金額'] || '0';
+            const val = Math.abs(parseInt(rawVal.replace(/[^0-9-]/g, ''), 10) || 0);
+            const memo = c['備考'] || '';
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'menu-item';
+            itemDiv.dataset.discountType = 'coupon';
+            itemDiv.dataset.couponName = name;
+            itemDiv.dataset.couponValue = val;
+            
+            let innerHtml = `<div>${name} (${val.toLocaleString()}円引き)</div>`;
+            if (memo && memo !== '-') {
+                innerHtml += `<div class="coupon-memo">※${memo}</div>`;
+            }
+            itemDiv.innerHTML = innerHtml;
+
+            container.appendChild(itemDiv);
+        });
+    }
+
+    const contextMenu = document.getElementById('event-discount-menu');
+
+    function bindEventDiscountMenu(cell, rowSelector, priceClass, typeClass) {
+        cell.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const tr = cell.closest('tr');
+            if (tr.id.includes('template')) return;
+
+            currentActiveRow = tr;
+            if (!tr.dataset.originalPrice) {
+                const currentPriceVal = parseInt(cell.textContent.replace(/,/g, ''), 10) || 0;
+                tr.dataset.originalPrice = currentPriceVal;
+                tr.dataset.appliedCouponName = '';
+                tr.dataset.appliedCouponVal = '0';
+                tr.dataset.appliedPercent = '0';
+            }
+
+            selectedTempCoupon = tr.dataset.appliedCouponName ? { name: tr.dataset.appliedCouponName, val: tr.dataset.appliedCouponVal } : null;
+            selectedTempPercent = tr.dataset.appliedPercent && tr.dataset.appliedPercent !== '0' ? tr.dataset.appliedPercent : null;
+
+            updateMenuSelectionState();
+
+            contextMenu.style.display = 'block';
+            let left = e.pageX;
+            let top = e.pageY;
+            if (left + 200 > window.innerWidth) left = window.innerWidth - 210;
+            if (top + 300 > window.innerHeight) top = window.innerHeight - 310;
+            contextMenu.style.left = `${left}px`;
+            contextMenu.style.top = `${top}px`;
+        });
+    }
+
+    function updateMenuSelectionState() {
+        contextMenu.querySelectorAll('.menu-item').forEach(item => {
+            const type = item.dataset.discountType;
+            item.classList.remove('selected-item');
+            if (type === 'percent' && selectedTempPercent === item.dataset.value) {
+                item.classList.add('selected-item');
+            } else if (type === 'coupon' && selectedTempCoupon && selectedTempCoupon.name === item.dataset.couponName) {
+                item.classList.add('selected-item');
+            }
+        });
+    }
+
+    contextMenu.addEventListener('click', (e) => {
+        const item = e.target.closest('.menu-item');
+        if (!item || !currentActiveRow) return;
+
+        const type = item.dataset.discountType;
+        if (type === 'coupon') {
+            if (selectedTempCoupon && selectedTempCoupon.name === item.dataset.couponName) {
+                selectedTempCoupon = null;
+            } else {
+                selectedTempCoupon = { name: item.dataset.couponName, val: item.dataset.couponValue };
+            }
+        } else if (type === 'percent') {
+            if (selectedTempPercent === item.dataset.value) {
+                selectedTempPercent = null;
+            } else {
+                selectedTempPercent = item.dataset.value;
+            }
+        }
+        updateMenuSelectionState();
+    });
+
+    document.getElementById('apply-discount-btn').addEventListener('click', () => {
+        if (!currentActiveRow) return;
         
-        <div class="no-break-div">
-        <small class="hidden-div1">お客様とのお約束事項(別紙入力)</small>
-        <table class="besshi-tbl hidden-div1">
-           <tr><td contenteditable="true"> 2Fアシストカンターにてお渡しいたします。<br><br>	</td></tr>
-        </table>
-        </div>        
-        <div class="no-break-div">
-        <small class="hidden-div1">社内伝達事項</small>
-        <table class="besshi-tbl hidden-div1">
-            <tr><td contenteditable="true">▢初期設定 MSA【▢新規・▢既存(▢outlook.jp・▢その他メール)】 ▢２段階認証【▢お渡し時・▢メール・▢電話】<br>
-                ▢RD作成 ▢Office認証、▢Windowsアップデート ▢メーカーアップデート<br>
-                ウイルス対策(▢VBTS ▢Mcafee　ユーザー登録【▢新規MSA・▢既存】)<br>
-                作業担当：▢AC・▢協力店(170)担当(719)</td></tr>
+        currentActiveRow.dataset.appliedCouponName = selectedTempCoupon ? selectedTempCoupon.name : '';
+        currentActiveRow.dataset.appliedCouponVal = selectedTempCoupon ? selectedTempCoupon.val : '0';
+        currentActiveRow.dataset.appliedPercent = selectedTempPercent ? selectedTempPercent : '0';
+
+        applyCalculatedDiscount(currentActiveRow);
+        contextMenu.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!contextMenu.contains(e.target)) {
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    function applyCalculatedDiscount(tr) {
+        const origPrice = parseInt(tr.dataset.originalPrice, 10) || 0;
+        const couponVal = parseInt(tr.dataset.appliedCouponVal, 10) || 0;
+        const percentVal = parseInt(tr.dataset.appliedPercent, 10) || 0;
+
+        // クーポン値引き → ％値引き の順で計算
+        let calculated = origPrice - couponVal;
+        if (calculated < 0) calculated = 0;
+
+        if (percentVal > 0) {
+            calculated = Math.floor(calculated * (1 - percentVal / 100));
+        }
+
+        const priceCell = tr.querySelector('.price, .posa-price');
+        if (priceCell) {
+            priceCell.textContent = calculated > 0 ? calculated.toLocaleString() : '0';
+            priceCell.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        const typeCell = tr.querySelector('.product-type, .posa-type');
+        if (typeCell) {
+            let baseText = tr.dataset.baseModelText;
+            if (!baseText) {
+                baseText = typeCell.textContent.replace(/【.*?】/g, '').trim();
+                tr.dataset.baseModelText = baseText;
+            }
+
+            let suffix = '';
+            const cName = tr.dataset.appliedCouponName;
+            const pVal = tr.dataset.appliedPercent;
+
+            if (cName) {
+                suffix += `【${cName}】`;
+            }
+            if (pVal && pVal !== '0') {
+                suffix += `【${pVal}%値引】`;
+            }
+
+            typeCell.textContent = baseText + (suffix ? '\n' + suffix : '');
+        }
+    }
+
+    // 商品選択・検索処理（product_list.csvから取得）
+    let allProductData = [];
+    let selectedProducts = [];
+    let selectedPosaProducts = [];
+    let selectedOwnedEquipment = [];
+
+    const modal = document.getElementById('product-modal');
+    const btnOpen = document.getElementById('product-list');
+    const btnClose = document.getElementById('close-modal');
+    const modalTbody = document.getElementById('modal-tbody');
+    const nameRadiosContainer = document.getElementById('name-radios');
+    const searchKeywordInput = document.getElementById('search-keyword');
+
+    btnOpen.addEventListener('click', () => {
+        modal.style.display = 'block';
+        if (allProductData.length === 0) {
+            Papa.parse('product_list.csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    parseCSVData(results.data);
+                    buildNameRadios();
+                    renderModalTable(allProductData);
+                },
+                error: function(error) {
+                    console.error('データ取得失敗:', error);
+                    alert('商品データ(product_list.csv)の取得に失敗しました。');
+                }
+            });
+        } else {
+            renderModalTable(allProductData);
+        }
+    });
+
+    btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target === modal) modal.style.display = 'none'; });
+
+    function parseCSVData(rows) {
+        allProductData = [];
+        rows.forEach(item => {
+            const cleanItem = {};
+            Object.keys(item).forEach(key => {
+                cleanItem[key.trim()] = item[key] !== undefined ? String(item[key]).trim() : '';
+            });
+
+            const nameVal = cleanItem['名称'] || cleanItem['商品名'] || '';
+            if (nameVal === 'END') return;
+            const modelVal = cleanItem['型番'] || '';
+            if (!nameVal && !modelVal) return;
+
+            let janVal = cleanItem['JANｺｰﾄﾞ'] || cleanItem['JANコード'] || cleanItem['JAN'] || '';
+            if (!janVal) janVal = 'POSA';
+
+            allProductData.push({
+                name: nameVal,
+                maker: cleanItem['メーカー'] || cleanItem['ﾒｰｶｰ'] || '',
+                model: modelVal,
+                storeCode: cleanItem['ｲﾝｽﾄｱｺｰﾄﾞ'] || cleanItem['インストアコード'] || '',
+                price: cleanItem['ｹｰｽﾞ売価'] || cleanItem['ケーズ売価'] || cleanItem['売価'] || cleanItem['金額'] || '',
+                jan: janVal,
+                memo: cleanItem['備考'] || ''
+            });
+        });
+    }
+
+    function buildNameRadios() {
+        const names = [...new Set(allProductData.map(item => item.name))].filter(Boolean);
+        let html = '<label><input type="radio" name="name-filter" value="" checked> 全て</label>';
+        names.forEach(name => {
+            html += `<label><input type="radio" name="name-filter" value="${name}"> ${name}</label>`;
+        });
+        nameRadiosContainer.innerHTML = html;
+        document.querySelectorAll('input[name="name-filter"]').forEach(radio => {
+            radio.addEventListener('change', filterAndRender);
+        });
+    }
+
+    searchKeywordInput.addEventListener('input', filterAndRender);
+
+    function normalizeStr(str) {
+        if (!str) return '';
+        return str.toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+    }
+
+    function filterAndRender() {
+        const selectedName = document.querySelector('input[name="name-filter"]:checked')?.value || '';
+        const rawKeyword = searchKeywordInput.value.trim();
+        const keyword = normalizeStr(rawKeyword);
+
+        const filtered = allProductData.filter(item => {
+            const matchesName = !selectedName || item.name === selectedName;
             
-                
-        </table>
-        </div>
+            const targetText = normalizeStr(
+                item.name + ' ' + 
+                item.maker + ' ' + 
+                item.model + ' ' + 
+                item.storeCode + ' ' + 
+                item.price + ' ' + 
+                item.jan + ' ' + 
+                item.memo
+            );
 
-<div class="save-load-container">
-    <button id="save-data-btn">SAVE</button>
-    <input type="file" id="load-file-input" style="display: none;">
-    <button id="load-file-btn">LOAD</button>
-</div>
+            const matchesKeyword = !keyword || targetText.includes(keyword);
+            return matchesName && matchesKeyword;
+        });
+        renderModalTable(filtered);
+    }
 
-</main>
-
-    <div id="product-modal" class="modal">
-        <div class="modal-content">
-            <h3>USBメモリ</h3>
-            <ul data-modal-list-id="product-modal-list" id="productList">
-                <li data-name="KUS-2A032GW" data-price="2800">KIOXIA USB2.0 Type-A(KUS-2A032GW)  - ¥2,800</li>
-                <li data-name="RUF-SP32G-BK" data-price="2500">BUFFALO USB3.2 Type-A(RUF32GB-BF)  - ¥2,500</li>
-                <li data-name="MF-TPC3032GBK" data-price="3300">ELECOM USB3.2 Type-A&C(MF-TPC3032GBK)  - ¥3,300</li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="virus-modal" class="modal">
-        <div class="modal-content">
-            <h3>ウイルスバスタートータルセキュリティ</h3>
-            <ul data-modal-list-id="virus-modal-list">
-                <h4>【スタンダード】</h4>
-                <li data-name="ウイルスバスター1年版(スタンダード)" data-price="6600">1年版  - ¥6,600</li>
-                <li data-name="ウイルスバスター1年自動更新版(スタンダード)" data-price="6050">1年自動更新版  - ¥6,050</li>
-                <li data-name="ウイルスバスター3年版(スタンダード)" data-price="13640">3年版  - ¥13,640</li>
-                <li data-name="ウイルスバスター3年自動更新版(スタンダード)" data-price="12540">3年年自動更新版  - ¥12,540</li>
-                <li data-name="ウイルスバスター4年版(スタンダード)" data-price="15620">4年版 - ¥15,620</li>
-                <li data-name="【POSA】ウイルスバスター4年版(スタンダード)" data-price="15620" data-posa-flag="1">【POSA】4年版 - ¥15,620</li>
-                <hr>
-                <h4>【プレミアム】</h4>
-                <li data-name="ウイルスバスター1年版(プレミアム)" data-price="9350">1年版 - ¥9,350</li>
-                <li data-name="ウイルスバスター1年自動更新版(プレミアム)" data-price="8800">1年自動更新版 - ¥8,800</li>
-                <li data-name="ウイルスバスター3年版(プレミアム)" data-price="23050">3年版 - ¥20,350</li>
-                <li data-name="ウイルスバスター3年自動更新版(プレミアム)" data-price="19250">3年自動更新版 - ¥19,250</li>
-
-                <hr>
-                <h4>VB同時購入値引き</h4>
-                <li data-name="ｳｲﾙｽﾊﾞｽﾀｰ1ﾈﾝ ﾄﾞｳｼﾞﾈﾋﾞｷ - ｺｸﾅｲ(I0049499)" data-price="-1000">1年版 値引き(国内PC用)  - ▲1,000</li>
-                <li data-name="ｳｲﾙｽﾊﾞｽﾀｰ3ﾈﾝ ﾄﾞｳｼﾞﾈﾋﾞｷ - ｺｸﾅｲ(I0049500)" data-price="-2000">3年版 値引き(国内PC用)  - ▲2,000</li>
-                <li data-name="ｳｲﾙｽﾊﾞｽﾀｰ1ﾈﾝ ﾄﾞｳｼﾞﾈﾋﾞｷ - ｶｲｶﾞｲ(I0049501)" data-price="-2000">1年版 値引き(海外PC用)  - ▲2,000</li>
-                <li data-name="ｳｲﾙｽﾊﾞｽﾀｰ1ﾈﾝ ﾄﾞｳｼﾞﾈﾋﾞｷ - ｶｲｶﾞｲ(I0049502)" data-price="-3000">3年 版値引き(海外PC用)  - ▲3,000</li>
-                <li data-name="ｳｲﾙｽﾊﾞｽﾀｰ ｷｶﾝｹﾞﾝﾃｲﾈﾋﾞｷ2026(I0049897)" data-price="-1500">期間限定値引き  - ▲1,500</li>
-<!--     
-                <h4>Surfaceセット値引き</h4>
-                <li data-name="Surface-ｳｲﾙｽﾊﾞｽﾀｰｾｯﾄ(I0059197)" data-price="-9140">Surface+ｳｲﾙｽﾊﾞｽﾀｰｾｯﾄ値引き - ▲9,140</li>
-                 <h4>--対象商品--</h4>
-                 <h7>Pro12インチ     EP2-46399(35346271)</h7><br>
-                 <h7>Laptop13インチ EP2-31880(35346264)</h7><br>
-                 <h7>　　　　　　　　EP2-30766(35346257)</h7><br>
-                 <h7>※3年版以上のみ対象です。</h7><br>
-                 <h7>※自動更新モデルは対象外です。</h7>
--->
-                <hr>
-                <h3>Fujitsu限定</h3>
-                <li data-name="【POSA】Fujitsu限定マカフィー1年版" data-price="2500" data-posa-flag="1">1年版 - ¥2,500</li>
-                <li data-name="【POSA】Fujitsu限定マカフィー3年版" data-price="6500" data-posa-flag="1">3年版 - ¥6,500</li>
+    function renderModalTable(data) {
+        modalTbody.innerHTML = '';
+        data.forEach(item => {
+            const tr = document.createElement('tr');
             
-                <hr>
-                <h3>マカフィーリブセーフ(Fujitsu以外)</h3>
-                <li data-name="【POSA】マカフィー1年版" data-price="4950"  data-posa-flag="1">1年版  - ¥3,950</li>
-                <li data-name="【POSA】マカフィー3年版" data-price="11000"  data-posa-flag="1">3年版  - ¥9,000</li>
-                </ul>
-        </div>
-    </div>
+            let formattedPrice = item.price;
+            if (item.price && !isNaN(item.price)) {
+                formattedPrice = Number(item.price).toLocaleString();
+            }
 
-    <div id="sale-modal" class="modal">
-        <div class="modal-content">
-            <ul data-modal-list-id="sale-modal-list">
-                <h2>PC本体値引</h2>
-                <h4>AI搭載パソコン値引施策</h4>
-                <li data-name="AIPC(I0056581)" data-price="-10000">AI搭載パソコン値引施策(I0056581) - ▲10,000</li>
-                <hr>
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.maker}</td>
+                <td>${item.model}</td>
+                <td>${item.storeCode}</td>
+                <td>${formattedPrice}</td>
+                <td>${item.jan}</td>
+                <td>${item.memo}</td>
+            `;
 
-                <h4>NEC</h4>
-                <li data-name="NECﾓﾊﾞｲﾙPCﾄｸﾍﾞﾂﾈﾋﾞｷ5000(IOO56614)" data-price="-5000">モバイルPC特別値引(IOO56614) - ▲5,000</li>
-                <li data-name="NECﾓﾊﾞｲﾙPCﾄｸﾍﾞﾂﾈﾋﾞｷ11000(IOO56613)" data-price="-11000">モバイルPC特別値引(IOO56613) - ▲10,000</li>
-                <hr>
+            tr.addEventListener('click', () => {
+                const isSelected = tr.classList.toggle('selected');
                 
-                <h4>富士通</h4>
-                <li data-name="FMVｶﾙｸﾃｲｲﾈ5500(I0056622)" data-price="-5500">FMV軽くていいね!(I0056622) - ▲5,500</li>
-                <li data-name="FMVｶﾙｸﾃｲｲﾈ22000(I0057784)" data-price="-22000">FMV軽くていいね!(I0057784) - ▲22,000</li>
-                <hr>
+                if (item.jan === 'POSA') {
+                    if (isSelected) {
+                        selectedPosaProducts.push(item);
+                        selectedOwnedEquipment.push(item);
+                    } else {
+                        selectedPosaProducts = selectedPosaProducts.filter(p => !(p.model === item.model && p.jan === item.jan));
+                        selectedOwnedEquipment = selectedOwnedEquipment.filter(p => !(p.name === item.name && p.model === item.model));
+                    }
+                    updatePosaTable();
+                    updateOwnedTable();
+                } else {
+                    if (isSelected) {
+                        selectedProducts.push(item);
+                        selectedOwnedEquipment.push(item);
+                    } else {
+                        selectedProducts = selectedProducts.filter(p => !(p.model === item.model && p.jan === item.jan));
+                        selectedOwnedEquipment = selectedOwnedEquipment.filter(p => !(p.name === item.name && p.model === item.model));
+                    }
+                    updateMainTable();
+                    updateOwnedTable();
+                }
+            });
+            modalTbody.appendChild(tr);
+        });
+    }
 
-                <h4>NEC/Lnovo</h4>
-                <li data-name="NL-ﾓﾊﾞｲﾙ5000(I0056815)" data-price="-5000">NEC/Lnovoモバイルパソコン特別セール(I0056815) - ▲5,000</li>
-                <hr>
-                
-                <h4>Microsoft</h4>
-                <li data-name="Copilot+pcﾈﾋﾞｷ10000(I0056581)" data-price="-10000">Copilot+pcﾈﾋﾞｷ10000(I0056581) - ▲10,000</li>
-                <hr>
-<!--
-                <h2>メーカー保証セット値引き</h2>
-                <h4>NEC 保証値引き</h4>
-                <li data-name="NECﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058213)" data-price="-2000" >NEC保証値引き - ▲2,000</li>
-                <hr>
-                <h4>富士通 保証値引き</h4>
-                <li data-name="ﾌｼﾞﾂｳﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ3000(I0058214)" data-price="-3000" >富士通保証値引き - ▲3,000</li>
-                <hr>
-                <h4>Lenovo保証値引き</h4>
-                <li data-name="ﾚﾉﾎﾞﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058216)" data-price="-2000" >Lenovo保証値引き - ▲2,000</li>
-                <hr>
-                <h4>ASUS保証値引き</h4>
-                <li data-name="ASUSﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058215)" data-price="-2000" >ASUS保証値引き - ▲2,000</li>
-                <hr>
+    // ==========================================
+    // 施策選択・検索処理（Discount List.csvから取得）
+    // ==========================================
+    let allMeasureData = [];
 
-                <h4>dynabook 保証値引き</h4>
-                <li data-name="ﾀﾞｲﾅﾌﾞｯｸﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058217)" data-price="-2000" >dynabook保証値引き - ▲2,000</li>
-                <hr>
+    const measureModal = document.getElementById('measure-modal');
+    const btnOpenMeasure = document.getElementById('measure-btn');
+    const btnCloseMeasure = document.getElementById('close-measure-modal');
+    const measureModalTbody = document.getElementById('measure-modal-tbody');
+    const measureSearchKeywordInput = document.getElementById('measure-search-keyword');
 
-                <h4>Microsoft保証値引き</h4>
-                <li data-name="ﾏｲｸﾛｿﾌﾄﾎｼｮｳﾈﾋﾞｷ2000(I0058218)" data-price="-2000" >Microsoft保証値引き - ▲2,000</li>
-                <hr>
--->               
+    btnOpenMeasure.addEventListener('click', () => {
+        measureModal.style.display = 'block';
+        if (allMeasureData.length === 0) {
+            Papa.parse('Discount List.csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    parseMeasureCSVData(results.data);
+                    renderMeasureModalTable(allMeasureData);
+                },
+                error: function(error) {
+                    console.error('施策データ取得失敗:', error);
+                    alert('施策データ(Discount List.csv)の取得に失敗しました。');
+                }
+            });
+        } else {
+            renderMeasureModalTable(allMeasureData);
+        }
+    });
+
+    btnCloseMeasure.addEventListener('click', () => { measureModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target === measureModal) measureModal.style.display = 'none'; });
+
+    function parseMeasureCSVData(rows) {
+        allMeasureData = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (let item of rows) {
+            const cleanItem = {};
+            Object.keys(item).forEach(key => {
+                cleanItem[key.trim()] = item[key] !== undefined ? String(item[key]).trim() : '';
+            });
+
+            const measureName = cleanItem['施策'] || '';
             
+            // ENDに到達したら終了
+            if (measureName === 'END') break;
+            
+            // 空行・無効行のスキップ
+            if (!measureName || measureName === 'nan' || measureName === '') continue;
 
+            const storeCode = cleanItem['ｲﾝｽﾄｱｺｰﾄﾞ'] || cleanItem['インストアコード'] || '';
+            let janVal = cleanItem['JANｺｰﾄﾞ'] || cleanItem['JANコード'] || cleanItem['JAN'] || '';
+            if (!janVal || janVal === 'nan') janVal = '';
 
-            </ul>
-        </div>
-    </div>
+            let startDateStr = cleanItem['開始日'] || '';
+            let endDateStr = cleanItem['終了日'] || '';
 
-    <div id="warranty-modal" class="modal">
-        <div class="modal-content">
-            <ul data-modal-list-id="warranty-modal-list">
-                <h4>NECあんしんプレミアム保証</h4>
-                <li data-name="【POSA】NECあんしんプレミアム保証3年" data-price="23760" data-posa-flag="1">3年 - 23,760</li>
-                <li data-name="【POSA】NECあんしんプレミアム保証4年" data-price="31680" data-posa-flag="1">4年 - 31,680</li>
-                <li data-name="【POSA】NECあんしんプレミアム保証5年" data-price="39600" data-posa-flag="1">5年 - 39,600</li>
-                <li data-name="NECﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058213)" data-price="-2000" >NEC保証値引き - ▲2,000</li>
-                <hr>
-                <h4>FMVパソコンワイド保証サービス</h4>
-                <li data-name="【POSA】FMVパソコンワイド保証サービス3年" data-price="23100" data-posa-flag="1">3年 - 23,100</li>
-                <li data-name="【POSA】FMVパソコンワイド保証サービス4年" data-price="29700" data-posa-flag="1">4年 - 29,700</li>
-                <li data-name="【POSA】FMVパソコンワイド保証サービス5年" data-price="36300" data-posa-flag="1">5年 - 36,300</li>
-                <li data-name="ﾌｼﾞﾂｳﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ3000(I0058214)" data-price="-3000" >富士通保証値引き - ▲3,000</li>
-                <hr>
-<!--
-                <h4>FMV LOOX Premium Care
-                <li data-name="【POSA】FMV LOOX Premium Care 3年" data-price="29800" data-posa-flag="1">3年 - 29,800</li>
-                <li data-name="【POSA】FMV LOOX Premium Care 4年" data-price="39800" data-posa-flag="1">4年 - 39,800</li>
-                <li data-name="【POSA】FMV LOOX Premium Care 5年" data-price="49800" data-posa-flag="1">5年 - 49,800</li>
-                <hr>
--->
-                <h4>dynabookプレミアム保証</h4>
-                <li data-name="【POSA】dynabookプレミアム保証 3年" data-price="23100" data-posa-flag="1">3年 - 23,100</li>
-                <li data-name="【POSA】dynabookプレミアム保証 4年" data-price="29700" data-posa-flag="1">4年 - 29,700</li>
-                <li data-name="【POSA】dynabookプレミアム保証 5年" data-price="36300" data-posa-flag="1">5年 - 36,300</li>
-                <hr>
-                <h4>ASUSの安心保証プレミアム</h4>
-                <li data-name="【POSA】ASUSの安心保証プレミアム 3年" data-price="14800" data-posa-flag="1">3年 - 14,800</li>
-                <li data-name="【POSA】ASUSの安心保証プレミアム 4年" data-price="23800" data-posa-flag="1">4年 - 23,800</li>
-                <hr>
-                <h4>HP Care Packアクシデントサポート(HPシリーズ)</h4>
-                <li data-name="【POSA】HP Care Packアクシデントサポート 3年" data-price="21780" data-posa-flag="1">3年 - 21,780</li>
-                <hr>
-                <h4>Lenovo</h4>
-                <li data-name="【POSA】Lenovoレギュラー延長保守 3年保証" data-price="11440" data-posa-flag="1">レギュラー延長保守 3年 - 11,440</li>
-                <li data-name="【POSA】Lenovoアクシデントダメージプロテクション 3年保証" data-price="25960" data-posa-flag="1">アクシデントダメージプロテクション 3年 - 25,960</li>
-                <li data-name="【POSA】Lenovoプレミアムケアダメージプロテクション 3年保証" data-price="36740" data-posa-flag="1">レギュラー延長保守 3年 - 36,740</li>
-                <li data-name="ﾚﾉﾎﾞﾊﾟｿｺﾝﾎｼｮｳﾈﾋﾞｷ2000(I0058216)" data-price="-2000" >Lenovo保証値引き - ▲2,000</li>
-                <hr>
-            </ul>
-        </div>
-    </div>
+            if (startDateStr === 'nan' || startDateStr === 'NaN') startDateStr = '';
+            if (endDateStr === 'nan' || endDateStr === 'NaN') endDateStr = '';
 
-    <div id="support-menu-modal" class="modal"> 
-        <div class="modal-content">
-            <h3>サポートメニュー</h3>
-            <div>
-                <input type="search" id="filter-input" placeholder="コードまたは内容を検索..." style="width: 90%; margin-bottom: 10px; padding: 3px;">
-                <div style="max-height: 400px; overflow-y: auto;">
-                    <table style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>コード</th>
-                                <th>内容</th>
-                                <th>金額</th>
-                                <th>JANコード</th>
-                            </tr>
-                        </thead>
-                        <tbody id="service-list-body">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+            // 開始日・終了日の期間チェック（nullの場合はそのまま表示対象にする）
+            let isValidPeriod = true;
+            if (startDateStr || endDateStr) {
+                const startDate = startDateStr ? new Date(startDateStr.replace(/\//g, '-')) : null;
+                const endDate = endDateStr ? new Date(endDateStr.replace(/\//g, '-')) : null;
+                if (startDate) startDate.setHours(0, 0, 0, 0);
+                if (endDate) endDate.setHours(23, 59, 59, 999);
 
+                if (startDate && today < startDate) isValidPeriod = false;
+                if (endDate && today > endDate) isValidPeriod = false;
+            }
 
+            if (isValidPeriod) {
+                allMeasureData.push({
+                    name: measureName,
+                    storeCode: storeCode,
+                    jan: janVal,
+                    price: cleanItem['単価'] || '',
+                    startDate: startDateStr,
+                    endDate: endDateStr
+                });
+            }
+        }
+    }
 
+    measureSearchKeywordInput.addEventListener('input', filterAndRenderMeasure);
 
-<div id="discount-menu" class="context-menu" style="display: none;">
-  <ul>
-    <h4>安心パスポート値引</h4>
-    <li data-discount="5%" data-label="【安パス5%引】">5%引</li>
-    <li data-discount="8%" data-label="【安パス5%引】">8%引(11/14まで)</li>
-    <li data-discount="10%" data-label="【安パス5%引】">10%引<hr></li>
-    <h4>アプリクーポン</h4>
-　　<li data-discount="500円" data-label="【アプリ初回登録ｸｰﾎﾟﾝ500円引】">500円引 ※単品1,000円(税込)以上<br>(アプリ初回登録時)</li>
-    <li data-discount="500円" data-label="【アプリ10周年感謝ｸｰﾎﾟﾝｸｰﾎﾟﾝ500円引】">500円引 ※単品3,000円(税込)以上<br>(アプリ10周年感謝ｸｰﾎﾟﾝ3/31まで1回限り)</li>
-    <li data-discount="500円" data-label="【お気入店舗登録特典ｸｰﾎﾟﾝ500円引】">500円引 ※単品3,000円(税込)以上<br>(お気に入り店舗登録特典ｸｰﾎﾟﾝ3/31まで1回限り)</li>
-    <li data-discount="100円" data-label="【ｸｰﾎﾟﾝ100円引】">100円引 ※単品1,000円(税込)以上</li>
-    <li data-discount="300円" data-label="【ｸｰﾎﾟﾝ300円引】">300円引 ※単品5,000円(税込)以上</li>
-    <li data-discount="1000円" data-label="【クーポン1000円引】">1000円引 ※単品15,000円(税込)以上</li>
-<li data-discount="2000円" data-label="【クーポン2000円引】">2000円引 ※単品20,000円(税込)以上<hr></li>
-    <li data-discount="clear">割引をクリア</li>
-  </ul>
-</div>
+    function filterAndRenderMeasure() {
+        const rawKeyword = measureSearchKeywordInput.value.trim();
+        const keyword = normalizeStr(rawKeyword);
 
-<div id="owned-product-modal" class="modal">
-    <div class="modal-content">
-        <h3>製品型番を選択</h3>
-        <ul id="owned-product-list">
-            </ul>
-    </div>
-</div>
+        const filtered = allMeasureData.filter(item => {
+            const targetText = normalizeStr(
+                item.name + ' ' + 
+                item.storeCode + ' ' + 
+                item.jan + ' ' + 
+                item.price + ' ' + 
+                item.startDate + ' ' + 
+                item.endDate
+            );
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
-<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-<script src="s_menu.js"></script>
-<script src="script.js"></script>
+            return !keyword || targetText.includes(keyword);
+        });
+        renderMeasureModalTable(filtered);
+    }
 
+    function renderMeasureModalTable(data) {
+        measureModalTbody.innerHTML = '';
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+
+            let formattedPrice = item.price;
+            if (item.price && !isNaN(item.price)) {
+                formattedPrice = Number(item.price).toLocaleString();
+            }
+
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.storeCode}</td>
+                <td>${item.jan}</td>
+                <td style="text-align: right;">${formattedPrice}</td>
+                <td style="text-align: center;">${item.startDate}</td>
+                <td style="text-align: center;">${item.endDate}</td>
+            `;
+
+            tr.addEventListener('click', () => {
+                const isSel = tr.classList.toggle('selected');
+                
+                // 商品テーブルには「インストアコード ＋ 改行 ＋ 施策名」の形式でモデル（型番）として追加
+                const displayModel = item.storeCode ? `${item.storeCode}\n${item.name}` : item.name;
+
+                if (isSel) {
+                    selectedProducts.push({
+                        name: item.name,
+                        maker: '',
+                        model: displayModel,
+                        storeCode: '',
+                        price: item.price,
+                        jan: item.jan,
+                        memo: ''
+                    });
+                } else {
+                    selectedProducts = selectedProducts.filter(p => !(p.model === displayModel && p.jan === item.jan));
+                }
+                updateMainTable();
+            });
+            measureModalTbody.appendChild(tr);
+        });
+    }
+
+    // ==========================================
+    // サポートメニュー選択
+    // ==========================================
+    let menuData = [];
+    let tableHeaders = [];
+    let currentKeywords = [];
+    let selectedSupportMenus = [];
+
+    const hideColumns = ['janコード', 'jan', '作業手順', '作業手順書'];
+    const detailColumns = ['作業内容詳細', '補足事項', '関連メニュー'];
+
+    const supportModal = document.getElementById('support-modal');
+    const btnOpenSupport = document.getElementById('support-menu-btn');
+    const btnCloseSupport = document.getElementById('close-support-modal');
+
+    btnOpenSupport.addEventListener('click', () => {
+        supportModal.style.display = 'block';
+        if (menuData.length === 0) {
+            Papa.parse('menu_list.csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    tableHeaders = results.meta.fields || [];
+                    menuData = results.data.map(item => {
+                        let cleaned = {};
+                        tableHeaders.forEach(key => {
+                            let trimmedKey = key.trim();
+                            cleaned[trimmedKey] = item[key] !== undefined ? String(item[key]).trim() : '';
+                        });
+                        return cleaned;
+                    });
+                    tableHeaders = tableHeaders.map(h => h.trim());
+                    document.getElementById('support-statusMessage').textContent = `全 ${menuData.length} 件のデータを読み込みました。`;
+                    filterAndRenderSupport();
+                },
+                error: function(error) {
+                    console.warn('Papa Parse 読み込み失敗:', error);
+                }
+            });
+        } else {
+            filterAndRenderSupport();
+        }
+    });
+
+    btnCloseSupport.addEventListener('click', () => { supportModal.style.display = 'none'; });
+    window.addEventListener('click', (event) => { if (event.target === supportModal) supportModal.style.display = 'none'; });
+
+    document.getElementById('support-searchInput').addEventListener('input', filterAndRenderSupport);
+    document.getElementById('support-includeDetailsCheckbox').addEventListener('change', filterAndRenderSupport);
+
+    function filterAndRenderSupport() {
+        const query = document.getElementById('support-searchInput').value.trim().replace(/ /g, ' ');
+        currentKeywords = query ? query.split(/\s+/) : [];
+        const includeDetails = document.getElementById('support-includeDetailsCheckbox').checked;
+
+        const visibleHeaders = tableHeaders.filter(h => {
+            const lower = h.toLowerCase();
+            return !hideColumns.includes(lower) && !detailColumns.includes(h);
+        });
+        const primaryHeaders = visibleHeaders.filter(h => !h.includes('単価') && !h.includes('価格'));
+
+        const filtered = menuData.filter(item => {
+            if (currentKeywords.length === 0) return true;
+
+            let targetValues = [];
+            if (includeDetails) {
+                targetValues = Object.values(item).map(val => String(val).toLowerCase());
+            } else {
+                targetValues = primaryHeaders.map(h => String(item[h] || '').toLowerCase());
+            }
+
+            return currentKeywords.some(keyword => 
+                targetValues.some(val => val.includes(keyword.toLowerCase()))
+            );
+        });
+
+        renderSupportTable(filtered);
+        document.getElementById('support-statusMessage').textContent = `全 ${menuData.length} 件中 ${filtered.length} 件を表示中`;
+    }
+
+    function renderSupportTable(data) {
+        const thead = document.getElementById('support-table-header');
+        const tbody = document.getElementById('support-modal-tbody');
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (tableHeaders.length === 0) return;
+
+        const visibleHeaders = tableHeaders.filter(h => {
+            const lower = h.toLowerCase();
+            return !hideColumns.includes(lower) && !detailColumns.includes(h);
+        });
+
+        let headerTr = document.createElement('tr');
+        let thIcon = document.createElement('th');
+        thIcon.className = 'w-10 px-3 py-2';
+        headerTr.appendChild(thIcon);
+
+        visibleHeaders.forEach((header, index) => {
+            let th = document.createElement('th');
+            let isPrice = header.includes('単価') || header.includes('価格');
+            th.className = `px-4 py-2 text-left ${isPrice ? 'text-right' : ''}`;
+            th.textContent = header;
+            headerTr.appendChild(th);
+        });
+        thead.appendChild(headerTr);
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${visibleHeaders.length + 1}" class="px-4 py-3 text-center text-slate-500">データがありません</td></tr>`;
+            return;
+        }
+
+        data.forEach((item, rowIndex) => {
+            const getVal = (candidates) => {
+                for (let c of candidates) {
+                    const foundKey = tableHeaders.find(h => h.toLowerCase() === c.toLowerCase());
+                    if (foundKey && item[foundKey] !== undefined) return item[foundKey];
+                }
+                return '';
+            };
+
+            const codeVal = getVal(['社内コード', '社内ｺｰﾄﾞ', 'コード']);
+            const itemVal = getVal(['作業内容', 'メニュー名', '名称']);
+            const janVal = getVal(['JANコード', 'JANｺｰﾄﾞ', 'JAN']);
+            const priceVal = getVal(['単価', '価格', '料金']);
+
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-blue-50 transition border-b border-slate-100 bg-white';
+            const isSelected = selectedSupportMenus.some(s => s.code === codeVal && s.jan === janVal);
+            if (isSelected) tr.classList.add('selected');
+
+            let rowMainHtml = '';
+            rowMainHtml += `<td class="w-10 px-2 py-2 text-center text-slate-400 hover:text-blue-600 font-bold transition-transform cursor-pointer select-none" id="support-icon-cell-${rowIndex}" title="詳細を開閉">
+                <span id="support-icon-${rowIndex}">▶</span>
+            </td>`;
+
+            visibleHeaders.forEach((header, index) => {
+                let val = item[header] || '';
+                let isPrice = header.includes('単価') || header.includes('価格');
+                let displayVal = isPrice ? formatPrice(val) : escapeHtml(val);
+                
+                if (!isPrice && currentKeywords.length > 0) {
+                    displayVal = highlightText(val, currentKeywords);
+                }
+
+                let alignClass = isPrice ? 'text-right font-semibold text-slate-700' : (index === 0 ? 'font-mono text-slate-600' : 'text-slate-900');
+                rowMainHtml += `<td class="px-4 py-2 ${alignClass}">${displayVal}</td>`;
+            });
+            tr.innerHTML = rowMainHtml;
+
+            const detailTr = document.createElement('tr');
+            detailTr.id = `support-detail-row-${rowIndex}`;
+            detailTr.className = 'hidden bg-slate-50/80 border-b border-slate-200';
+            
+            let detailTd = document.createElement('td');
+            detailTd.colSpan = visibleHeaders.length + 1;
+            detailTd.className = 'px-4 py-3 space-y-2';
+
+            detailColumns.forEach(colName => {
+                if (tableHeaders.includes(colName)) {
+                    let val = item[colName];
+                    let displayVal = (val && val !== 'nan') ? val : '（記載なし）';
+                    
+                    let escapedVal = escapeHtml(displayVal);
+                    if (val && val !== 'nan' && currentKeywords.length > 0) {
+                        escapedVal = highlightText(displayVal, currentKeywords);
+                    }
+
+                    let subDiv = document.createElement('div');
+                    subDiv.className = 'bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm space-y-1';
+                    subDiv.innerHTML = `
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">${escapeHtml(colName)}</div>
+                        <div class="text-sm text-slate-700 whitespace-pre-wrap">${escapedVal}</div>
+                    `;
+                    detailTd.appendChild(subDiv);
+                }
+            });
+            detailTr.appendChild(detailTd);
+
+            tbody.appendChild(tr);
+            tbody.appendChild(detailTr);
+
+            document.getElementById(`support-icon-cell-${rowIndex}`).onclick = (e) => {
+                e.stopPropagation();
+                toggleSupportRow(rowIndex);
+            };
+
+            tr.querySelectorAll('td:not(:first-child)').forEach(td => {
+                td.style.cursor = 'pointer';
+                td.addEventListener('click', () => {
+                    const isSel = tr.classList.toggle('selected');
+                    const supportItem = { code: codeVal, item: itemVal, jan: janVal, price: priceVal };
+                    if (isSel) {
+                        selectedSupportMenus.push(supportItem);
+                    } else {
+                        selectedSupportMenus = selectedSupportMenus.filter(s => !(s.code === codeVal && s.jan === janVal));
+                    }
+                    updateWorkTable();
+                });
+            });
+        });
+    }
+
+    function toggleSupportRow(rowIndex) {
+        const detailRow = document.getElementById(`support-detail-row-${rowIndex}`);
+        const icon = document.getElementById(`support-icon-${rowIndex}`);
+
+        if (detailRow.classList.contains('hidden')) {
+            detailRow.classList.remove('hidden');
+            icon.textContent = '▼';
+            icon.style.color = '#2563eb';
+        } else {
+            detailRow.classList.add('hidden');
+            icon.textContent = '▶';
+            icon.style.color = '';
+        }
+    }
+
+    function formatPrice(val) {
+        if (!val) return '-';
+        const num = Number(val);
+        return isNaN(num) ? val : num.toLocaleString() + '円';
+    }
+
+    function highlightText(text, keywords) {
+        if (!text || keywords.length === 0) return escapeHtml(text);
+        const safeText = escapeHtml(text);
+        const escapedKeywords = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        const regex = new RegExp(`(${escapedKeywords.join('|')})`, 'gi');
+        return safeText.replace(regex, '<mark class="bg-yellow-200 text-slate-900 rounded px-0.5">$1</mark>');
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function initWorkTable() {
+        const tbody = document.getElementById('work-rows');
+        const template = document.getElementById('work-row-template');
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'work-row';
+        clone.style.display = '';
+        tbody.appendChild(clone);
+        attachWorkTableEvents();
+    }
+
+    function updateWorkTable() {
+        const tbody = document.getElementById('work-rows');
+        const template = document.getElementById('work-row-template');
+
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+
+        if (selectedSupportMenus.length === 0) {
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'work-row';
+            clone.style.display = '';
+            tbody.appendChild(clone);
+            generateBarcodesForContainer('#work-rows');
+            attachWorkTableEvents();
+            return;
+        }
+
+        selectedSupportMenus.forEach(item => {
+            let formattedPrice = '';
+            let calculatedTotal = '';
+            if (item.price && !isNaN(item.price)) {
+                const numPrice = parseInt(item.price, 10);
+                formattedPrice = numPrice.toLocaleString();
+                calculatedTotal = numPrice.toLocaleString();
+            }
+
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'work-row';
+            clone.style.display = '';
+
+            clone.querySelector('.work-code').textContent = item.code;
+            clone.querySelector('.work-item').textContent = item.item;
+            clone.querySelector('.work-janCode').textContent = item.jan;
+            clone.querySelector('.work-price').textContent = formattedPrice;
+            clone.querySelector('.work-lineTotal').textContent = calculatedTotal;
+
+            tbody.appendChild(clone);
+        });
+
+        generateBarcodesForContainer('#work-rows');
+        attachWorkTableEvents();
+    }
+
+    function attachWorkTableEvents() {
+        const tbody = document.getElementById('work-rows');
+        tbody.querySelectorAll('tr.work-row:not(#work-row-template)').forEach(tr => {
+            const qtyInput = tr.querySelector('.work-quantity');
+            const priceInput = tr.querySelector('.work-price');
+            const totalCell = tr.querySelector('.work-lineTotal');
+            const deleteBtn = tr.querySelector('.delete-work-btn');
+
+            function recalcWork() {
+                const qty = parseInt(qtyInput.textContent.replace(/,/g, ''), 10) || 0;
+                const price = parseInt(priceInput.textContent.replace(/,/g, ''), 10) || 0;
+                const total = qty * price;
+                totalCell.textContent = total > 0 ? total.toLocaleString() : '';
+                calculateTotals();
+            }
+
+            if (qtyInput && !qtyInput.dataset.listenerAttached) {
+                qtyInput.dataset.listenerAttached = 'true';
+                qtyInput.addEventListener('input', recalcWork);
+            }
+            if (priceInput && !priceInput.dataset.listenerAttached) {
+                priceInput.dataset.listenerAttached = 'true';
+                priceInput.addEventListener('input', recalcWork);
+            }
+
+            if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+                deleteBtn.dataset.listenerAttached = 'true';
+                deleteBtn.addEventListener('click', () => {
+                    const validRows = tbody.querySelectorAll('tr.work-row:not(#work-row-template)');
+                    const codeText = tr.querySelector('.work-code').textContent.trim();
+                    const itemText = tr.querySelector('.work-item').textContent.trim();
+
+                    selectedSupportMenus = selectedSupportMenus.filter(s => !(s.code === codeText && s.item === itemText));
+
+                    document.querySelectorAll('#support-modal-tbody tr:not([id*="detail"])').forEach(sTr => {
+                        const codeCell = sTr.querySelector('td:nth-child(2)');
+                        if (codeCell && codeCell.textContent.trim() === codeText) {
+                            sTr.classList.remove('selected');
+                        }
+                    });
+
+                    if (validRows.length > 1) {
+                        tr.remove();
+                        updateWorkRowNumbers();
+                        updateAddButtonCells('work-rows', 'work-add-btn-cell', addWorkRowHandler);
+                        calculateTotals();
+                    } else {
+                        qtyInput.textContent = '1';
+                        priceInput.textContent = '';
+                        totalCell.textContent = '';
+                        tr.querySelector('.work-code').textContent = '';
+                        tr.querySelector('.work-item').textContent = '';
+                        tr.querySelector('.work-janCode').textContent = '';
+                        tr.querySelector('.work-barCode svg').innerHTML = '';
+                        calculateTotals();
+                    }
+                });
+            }
+        });
+        updateWorkRowNumbers();
+        updateAddButtonCells('work-rows', 'work-add-btn-cell', addWorkRowHandler);
+        generateBarcodesForContainer('#work-rows');
+        calculateTotals();
+    }
+
+    function updateWorkRowNumbers() {
+        const rows = document.querySelectorAll('#work-rows tr.work-row:not(#work-row-template)');
+        rows.forEach((tr, index) => {
+            const noCell = tr.querySelector('.work-no');
+            if (noCell) noCell.textContent = index + 1;
+        });
+    }
+
+    function addWorkRowHandler() {
+        const template = document.getElementById('work-row-template');
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'work-row';
+        clone.style.display = '';
+        document.getElementById('work-rows').appendChild(clone);
+        attachWorkTableEvents();
+    }
+
+    function generateBarcodesForContainer(containerSelector) {
+        document.querySelectorAll(`${containerSelector} tr`).forEach(tr => {
+            const janCell = tr.querySelector('.jan-cell, .work-janCode');
+            const svgElem = tr.querySelector('.barcode-svg');
+            if (janCell && svgElem) {
+                const janText = janCell.textContent.trim();
+                if (janText && janText !== 'POSA' && /^\d+$/.test(janText)) {
+                    try {
+                        JsBarcode(svgElem, janText, {
+                            format: janText.length === 8 ? "EAN8" : "EAN13",
+                            displayValue: true,
+                            fontSize: 12,
+                            height: 20,
+                            width: 2,
+                            margin: 2
+                        });
+                    } catch (e) {
+                        svgElem.innerHTML = '';
+                    }
+                } else {
+                    svgElem.innerHTML = '';
+                }
+            }
+        });
+    }
+
+    function calculateTotals() {
+        let productSubtotal = 0;
+        document.querySelectorAll('#product-tbody tr.product-row:not(#product-row-template)').forEach(tr => {
+            const totalCell = tr.querySelector('.total');
+            if (totalCell) {
+                productSubtotal += parseInt(totalCell.textContent.replace(/,/g, ''), 10) || 0;
+            }
+        });
+        document.getElementById('product-subtotal').textContent = productSubtotal.toLocaleString();
+
+        let workSubtotal = 0;
+        document.querySelectorAll('#work-rows tr.work-row:not(#work-row-template)').forEach(tr => {
+            const totalCell = tr.querySelector('.work-lineTotal');
+            if (totalCell) {
+                workSubtotal += parseInt(totalCell.textContent.replace(/,/g, ''), 10) || 0;
+            }
+        });
+        document.getElementById('work-subtotal').textContent = workSubtotal.toLocaleString();
+
+        let posaSubtotal = 0;
+        document.querySelectorAll('#posa-rows tr.posa-row:not(#posa-row-template)').forEach(tr => {
+            const totalCell = tr.querySelector('.posa-lineTotal');
+            if (totalCell) {
+                posaSubtotal += parseInt(totalCell.textContent.replace(/,/g, ''), 10) || 0;
+            }
+        });
+        const posaSubtotalElem = document.getElementById('posa-subtotal');
+        if (posaSubtotalElem) posaSubtotalElem.textContent = posaSubtotal.toLocaleString();
+
+        const normalGroupTotal = productSubtotal + workSubtotal;
+        document.getElementById('normal-subtotal-display').textContent = normalGroupTotal.toLocaleString();
+        
+        const normalGroupTitle = document.getElementById('normal-group-title');
+        const normalDisplayLine = document.getElementById('normal-total-display-line');
+        const posaDisplayLine = document.getElementById('posa-total-display-line');
+        const totalDividerLine = document.getElementById('total-divider-line');
+
+        if (selectedPosaProducts.length > 0) {
+            normalGroupTitle.style.display = 'block';
+            normalDisplayLine.style.display = 'grid';
+            posaDisplayLine.style.display = 'grid';
+            totalDividerLine.style.display = 'block';
+            document.getElementById('posa-subtotal-display').textContent = posaSubtotal.toLocaleString();
+        } else {
+            normalGroupTitle.style.display = 'none';
+            normalDisplayLine.style.display = 'none';
+            posaDisplayLine.style.display = 'none';
+            totalDividerLine.style.display = 'none';
+        }
+
+        const grandTotal = normalGroupTotal + posaSubtotal;
+        document.getElementById('grand-total').textContent = grandTotal.toLocaleString();
+    }
+
+    function updateAddButtonCells(tbodyId, cellClassName, addActionCallback) {
+        const tbody = document.getElementById(tbodyId);
+        const rows = tbody.querySelectorAll('tr:not([style*="display: none"])');
+        
+        tbody.querySelectorAll(`.${cellClassName}`).forEach(cell => {
+            cell.innerHTML = '';
+        });
+
+        if (rows.length > 0) {
+            const lastRow = rows[rows.length - 1];
+            const targetCell = lastRow.querySelector(`.${cellClassName}`);
+            if (targetCell) {
+                const addBtn = document.createElement('button');
+                addBtn.className = 'add-btn-circle';
+                addBtn.textContent = '+';
+                addBtn.title = '行追加';
+                addBtn.addEventListener('click', addActionCallback);
+                targetCell.appendChild(addBtn);
+            }
+        }
+    }
+
+    function attachTableEvents() {
+        const tbody = document.getElementById('product-tbody');
+        tbody.querySelectorAll('tr.product-row:not(#product-row-template)').forEach(tr => {
+            const qtyInput = tr.querySelector('.quantity');
+            const priceInput = tr.querySelector('.price');
+            const totalCell = tr.querySelector('.total');
+            const deleteBtn = tr.querySelector('.delete-product-btn');
+            const warrantySelect = tr.querySelector('.warranty-select');
+
+            bindEventDiscountMenu(priceInput, 'product-row', 'price', 'product-type');
+
+            function recalc() {
+                const qty = parseInt(qtyInput.textContent.replace(/,/g, ''), 10) || 0;
+                const price = parseInt(priceInput.textContent.replace(/,/g, ''), 10) || 0;
+                const total = qty * price;
+                totalCell.textContent = total > 0 ? total.toLocaleString() : '';
+                calculateTotals();
+            }
+            qtyInput.addEventListener('input', recalc);
+            priceInput.addEventListener('input', recalc);
+
+            if (warrantySelect && !warrantySelect.dataset.listenerAttached) {
+                warrantySelect.dataset.listenerAttached = 'true';
+                warrantySelect.addEventListener('change', () => {
+                    if (warrantySelect.value === '加入') {
+                        const totalVal = parseInt(totalCell.textContent.replace(/,/g, ''), 10) || 0;
+                        
+                        if (totalVal < 11000) {
+                            alert("延長保証対象外です。ご購入金額1万円（税別）以上が対象です。");
+                            warrantySelect.value = "";
+                            return;
+                        }
+
+                        let warrantyName = "";
+                        let warrantyPrice = 0;
+
+                        if (totalVal >= 55000) {
+                            warrantyName = "Ksあんしん延長保証5年";
+                            warrantyPrice = Math.floor(totalVal * 0.05);
+                        } else {
+                            warrantyName = "Ksあんしん延長保証3年";
+                            warrantyPrice = Math.floor(totalVal * 0.05);
+                        }
+
+                        const template = document.getElementById('product-row-template');
+                        const clone = template.cloneNode(true);
+                        clone.removeAttribute('id');
+                        clone.className = 'product-row';
+                        clone.style.display = '';
+
+                        clone.querySelector('.product-type').textContent = warrantyName;
+                        clone.querySelector('.price').textContent = warrantyPrice > 0 ? warrantyPrice.toLocaleString() : '';
+                        clone.querySelector('.total').textContent = warrantyPrice > 0 ? warrantyPrice.toLocaleString() : '';
+                        
+                        tr.after(clone);
+                        attachTableEvents();
+                    }
+                });
+            }
+
+            if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+                deleteBtn.dataset.listenerAttached = 'true';
+                deleteBtn.addEventListener('click', () => {
+                    const validRows = tbody.querySelectorAll('tr.product-row:not(#product-row-template)');
+                    const typeCellText = tr.querySelector('.product-type').textContent.trim();
+                    const janCellText = tr.querySelector('.jan-cell').textContent.trim();
+                    
+                    selectedProducts = selectedProducts.filter(p => {
+                        const disp = p.storeCode ? `${p.storeCode}\n${p.model}` : p.model;
+                        return disp !== typeCellText || p.jan !== janCellText;
+                    });
+
+                    selectedOwnedEquipment = selectedOwnedEquipment.filter(p => {
+                        const disp = p.storeCode ? `${p.storeCode}\n${p.model}` : p.model;
+                        return disp !== typeCellText;
+                    });
+                    updateOwnedTable();
+
+                    if (validRows.length > 1) {
+                        tr.remove();
+                        updateProductRowNumbers();
+                        updateAddButtonCells('product-tbody', 'add-btn-cell', addProductRowHandler);
+                        calculateTotals();
+                    } else {
+                        qtyInput.textContent = '1';
+                        priceInput.textContent = '';
+                        totalCell.textContent = '';
+                        tr.querySelector('.product-type').textContent = '';
+                        tr.querySelector('.jan-cell').textContent = '';
+                        tr.querySelector('.barcode-svg').innerHTML = '';
+                        tr.querySelector('.warranty-select').value = '';
+                        calculateTotals();
+                    }
+                });
+            }
+        });
+        updateProductRowNumbers();
+        updateAddButtonCells('product-tbody', 'add-btn-cell', addProductRowHandler);
+        generateBarcodesForContainer('#product-tbody');
+        calculateTotals();
+    }
+
+    function updateProductRowNumbers() {
+        const rows = document.querySelectorAll('#product-tbody tr.product-row:not(#product-row-template)');
+        rows.forEach((tr, index) => {
+            const noCell = tr.querySelector('.row-no');
+            if (noCell) noCell.textContent = index + 1;
+        });
+    }
+
+    function addProductRowHandler() {
+        const template = document.getElementById('product-row-template');
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'product-row';
+        clone.style.display = '';
+        document.getElementById('product-tbody').appendChild(clone);
+        attachTableEvents();
+    }
+
+    function updateMainTable() {
+        const tbody = document.getElementById('product-tbody');
+        const template = document.getElementById('product-row-template');
+        
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+
+        if (selectedProducts.length === 0) {
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'product-row';
+            clone.style.display = '';
+            tbody.appendChild(clone);
+            generateBarcodesForContainer('#product-tbody');
+            attachTableEvents();
+            return;
+        }
+
+        selectedProducts.forEach((item) => {
+            const displayModel = item.storeCode ? `${item.storeCode}\n${item.model}` : item.model;
+
+            let formattedPrice = '';
+            let calculatedTotal = '';
+            if (item.price !== undefined && item.price !== '' && !isNaN(item.price)) {
+                const numericPrice = parseInt(item.price, 10);
+                formattedPrice = numericPrice.toLocaleString();
+                calculatedTotal = numericPrice.toLocaleString();
+            }
+
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'product-row';
+            clone.style.display = '';
+            
+            clone.querySelector('.product-type').textContent = displayModel;
+            clone.querySelector('.jan-cell').textContent = item.jan;
+            clone.querySelector('.price').textContent = formattedPrice;
+            clone.querySelector('.total').textContent = calculatedTotal;
+
+            clone.dataset.originalPrice = item.price || '0';
+            clone.dataset.baseModelText = displayModel;
+
+            tbody.appendChild(clone);
+        });
+
+        generateBarcodesForContainer('#product-tbody');
+        attachTableEvents();
+    }
+
+    function attachPosaTableEvents() {
+        const tbody = document.getElementById('posa-rows');
+        tbody.querySelectorAll('tr.posa-row:not(#posa-row-template)').forEach(tr => {
+            const qtyInput = tr.querySelector('.posa-quantity');
+            const priceInput = tr.querySelector('.posa-price');
+            const totalCell = tr.querySelector('.posa-lineTotal');
+            const deleteBtn = tr.querySelector('.delete-posa-btn');
+
+            bindEventDiscountMenu(priceInput, 'posa-row', 'posa-price', 'posa-type');
+
+            function recalcPosa() {
+                const qty = parseInt(qtyInput.textContent.replace(/,/g, ''), 10) || 0;
+                const price = parseInt(priceInput.textContent.replace(/,/g, ''), 10) || 0;
+                const total = qty * price;
+                totalCell.textContent = total > 0 ? total.toLocaleString() : '';
+                calculateTotals();
+            }
+
+            qtyInput.addEventListener('input', recalcPosa);
+            priceInput.addEventListener('input', recalcPosa);
+
+            if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+                deleteBtn.dataset.listenerAttached = 'true';
+                deleteBtn.addEventListener('click', () => {
+                    const typeCellText = tr.querySelector('.posa-type').textContent.trim();
+                    
+                    selectedPosaProducts = selectedPosaProducts.filter(p => {
+                        const disp = p.storeCode ? `${p.storeCode}\n${p.model}` : p.model;
+                        return disp !== typeCellText;
+                    });
+
+                    selectedOwnedEquipment = selectedOwnedEquipment.filter(p => {
+                        const disp = p.storeCode ? `${p.storeCode}\n${p.model}` : p.model;
+                        return disp !== typeCellText;
+                    });
+                    updateOwnedTable();
+
+                    tr.remove();
+                    updatePosaRowNumbers();
+                    updateAddButtonCells('posa-rows', 'posa-add-btn-cell', addPosaRowHandler);
+                    calculateTotals();
+
+                    if (selectedPosaProducts.length === 0) {
+                        document.getElementById('posa-section').style.display = 'none';
+                    }
+                });
+            }
+        });
+        updatePosaRowNumbers();
+        updateAddButtonCells('posa-rows', 'posa-add-btn-cell', addPosaRowHandler);
+        calculateTotals();
+    }
+
+    function updatePosaRowNumbers() {
+        const rows = document.querySelectorAll('#posa-rows tr.posa-row:not(#posa-row-template)');
+        rows.forEach((tr, index) => {
+            const noCell = tr.querySelector('.posa-no');
+            if (noCell) noCell.textContent = index + 1;
+        });
+    }
+
+    function addPosaRowHandler() {
+        const template = document.getElementById('posa-row-template');
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'posa-row';
+        clone.style.display = '';
+        
+        clone.querySelector('.posa-type').textContent = '';
+        clone.querySelector('.posa-price').textContent = '';
+        clone.querySelector('.posa-lineTotal').textContent = '';
+
+        document.getElementById('posa-rows').appendChild(clone);
+        attachPosaTableEvents();
+    }
+
+    function updatePosaTable() {
+        const posaSection = document.getElementById('posa-section');
+        const tbody = document.getElementById('posa-rows');
+        const template = document.getElementById('posa-row-template');
+
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+
+        if (selectedPosaProducts.length === 0) {
+            posaSection.style.display = 'none';
+            calculateTotals();
+            return;
+        }
+
+        posaSection.style.display = 'block';
+
+        selectedPosaProducts.forEach((item) => {
+            const displayModel = item.storeCode ? `${item.storeCode}\n${item.model}` : item.model;
+
+            let formattedPrice = '';
+            let calculatedTotal = '';
+            if (item.price && !isNaN(item.price)) {
+                const numericPrice = parseInt(item.price, 10);
+                formattedPrice = numericPrice.toLocaleString();
+                calculatedTotal = numericPrice.toLocaleString();
+            }
+
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'posa-row';
+            clone.style.display = '';
+            
+            clone.querySelector('.posa-type').textContent = displayModel;
+            clone.querySelector('.posa-price').textContent = formattedPrice;
+            clone.querySelector('.posa-lineTotal').textContent = calculatedTotal;
+
+            clone.dataset.originalPrice = item.price || '0';
+            clone.dataset.baseModelText = displayModel;
+
+            tbody.appendChild(clone);
+        });
+
+        attachPosaTableEvents();
+    }
+
+    function updateOwnedTable() {
+        const tbody = document.getElementById('owned-equipment-tbody');
+        const template = document.getElementById('owned-equipment-row-template');
+        
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+
+        if (selectedOwnedEquipment.length === 0 && tbody.querySelectorAll('tr.owned-equipment-row:not(#owned-equipment-row-template)').length === 0) {
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'owned-equipment-row';
+            clone.style.display = '';
+            tbody.appendChild(clone);
+            attachOwnedTableEvents();
+            return;
+        }
+
+        if (selectedOwnedEquipment.length > 0) {
+            selectedOwnedEquipment.forEach((item) => {
+                const clone = template.cloneNode(true);
+                clone.removeAttribute('id');
+                clone.className = 'owned-equipment-row';
+                clone.style.display = '';
+                
+                clone.querySelector('.owned-equipment-type').textContent = item.name;
+                clone.querySelector('.product-model-cell').textContent = item.model;
+
+                tbody.appendChild(clone);
+            });
+        } else {
+            const clone = template.cloneNode(true);
+            clone.removeAttribute('id');
+            clone.className = 'owned-equipment-row';
+            clone.style.display = '';
+            tbody.appendChild(clone);
+        }
+
+        attachOwnedTableEvents();
+    }
+
+    function attachOwnedTableEvents() {
+        const tbody = document.getElementById('owned-equipment-tbody');
+        tbody.querySelectorAll('tr.owned-equipment-row:not(#owned-equipment-row-template)').forEach(tr => {
+            const deleteBtn = tr.querySelector('.delete-owned-btn');
+
+            if (deleteBtn && !deleteBtn.dataset.listenerAttached) {
+                deleteBtn.dataset.listenerAttached = 'true';
+                deleteBtn.addEventListener('click', () => {
+                    const validRows = tbody.querySelectorAll('tr.owned-equipment-row:not(#owned-equipment-row-template)');
+                    const typeText = tr.querySelector('.owned-equipment-type').textContent.trim();
+                    const modelText = tr.querySelector('.product-model-cell').textContent.trim();
+
+                    selectedOwnedEquipment = selectedOwnedEquipment.filter(p => !(p.name === typeText && p.model === modelText));
+
+                    if (validRows.length > 1) {
+                        tr.remove();
+                        updateOwnedRowNumbers();
+                        updateAddButtonCells('owned-equipment-tbody', 'owned-add-btn-cell', addOwnedRowHandler);
+                    } else {
+                        tr.querySelector('.owned-equipment-type').textContent = '';
+                        tr.querySelector('.product-model-cell').textContent = '';
+                        tr.querySelector('.owned-serial-cell').textContent = '';
+                        updateOwnedRowNumbers();
+                        updateAddButtonCells('owned-equipment-tbody', 'owned-add-btn-cell', addOwnedRowHandler);
+                    }
+                });
+            }
+        });
+        updateOwnedRowNumbers();
+        updateAddButtonCells('owned-equipment-tbody', 'owned-add-btn-cell', addOwnedRowHandler);
+    }
+
+    function updateOwnedRowNumbers() {
+        const rows = document.getElementById('owned-equipment-tbody').querySelectorAll('tr.owned-equipment-row:not(#owned-equipment-row-template)');
+        rows.forEach((tr, index) => {
+            const noCell = tr.querySelector('.owned-no');
+            if (noCell) noCell.textContent = index + 1;
+        });
+    }
+
+    function addOwnedRowHandler() {
+        const template = document.getElementById('owned-equipment-row-template');
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'owned-equipment-row';
+        clone.style.display = '';
+        
+        clone.querySelector('.owned-equipment-type').textContent = '';
+        clone.querySelector('.product-model-cell').textContent = '';
+        clone.querySelector('.owned-serial-cell').textContent = '';
+
+        document.getElementById('owned-equipment-tbody').appendChild(clone);
+        attachOwnedTableEvents();
+    }
+
+    function initOwnedTable() {
+        const tbody = document.getElementById('owned-equipment-tbody');
+        const template = document.getElementById('owned-equipment-row-template');
+        tbody.innerHTML = '';
+        tbody.appendChild(template);
+        const clone = template.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.className = 'owned-equipment-row';
+        clone.style.display = '';
+        tbody.appendChild(clone);
+        attachOwnedTableEvents();
+    }
+
+    // ==========================================
+    // テーブル行のドラッグ＆ドロップ並び替え (SortableJS)
+    // ==========================================
+    function initSortableTables() {
+        // 1. 商品テーブル
+        Sortable.create(document.getElementById('product-tbody'), {
+            handle: '.row-no',
+            animation: 150,
+            filter: '#product-row-template',
+            onEnd: function () {
+                updateProductRowNumbers();
+                updateAddButtonCells('product-tbody', 'add-btn-cell', addProductRowHandler);
+                calculateTotals();
+            }
+        });
+
+        // 2. 作業テーブル
+        Sortable.create(document.getElementById('work-rows'), {
+            handle: '.work-no',
+            animation: 150,
+            filter: '#work-row-template',
+            onEnd: function () {
+                updateWorkRowNumbers();
+                updateAddButtonCells('work-rows', 'work-add-btn-cell', addWorkRowHandler);
+                calculateTotals();
+            }
+        });
+
+        // 3. お客様所有の製品型番テーブル
+        Sortable.create(document.getElementById('owned-equipment-tbody'), {
+            handle: '.owned-no',
+            animation: 150,
+            filter: '#owned-equipment-row-template',
+            onEnd: function () {
+                updateOwnedRowNumbers();
+                updateAddButtonCells('owned-equipment-tbody', 'owned-add-btn-cell', addOwnedRowHandler);
+            }
+        });
+
+        // 4. POSAテーブル
+        const posaTbody = document.getElementById('posa-rows');
+        if (posaTbody) {
+            Sortable.create(posaTbody, {
+                handle: '.posa-no',
+                animation: 150,
+                filter: '#posa-row-template',
+                onEnd: function () {
+                    updatePosaRowNumbers();
+                    updateAddButtonCells('posa-rows', 'posa-add-btn-cell', addPosaRowHandler);
+                    calculateTotals();
+                }
+            });
+        }
+    }
+
+    updateMainTable();
+    updatePosaTable();
+    initWorkTable();
+    initOwnedTable();
+    initSortableTables();
+  </script>
 </body>
 </html>
