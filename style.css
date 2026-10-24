@@ -1,829 +1,809 @@
-body {
-      margin: 0;
-      padding: 0;
-      font-family: "Yu Gothic", "游ゴシック体", sans-serif;
-    }
 
-    th {
-      background-color: #f2f2f2;
-      font-weight: normal;
-    }
+@page {
+  size: A4;
+  margin: 10mm 5mm 10mm 5mm;
 
-    th,td {
-        font-size: 12px;
-        border: 1px solid black;
-        text-align: center;
-    }
-    table {
-      border-collapse: collapse;
-      margin-top: 0px;
-      margin-bottom: 3px;
-    }
-
-   .barcode-svg {
-  background-color: rgb(4, 41, 247);
-  
-  border: 1px dashed blue;
-  /*
-  display: block;
-  
-  width: 100%;
-  height: 20px;
-  
-  margin: 0;
-  padding: 0;*/
 }
 
+body { 
+  font-family: "BIZ UDPMedium", "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif; 
+  margin: 0 auto;
+  max-width: 765px;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 2mm;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
 
-    input,
-    select,
-    textarea {
-        font-family: inherit; /* フォントファミリーを継承 */
-        font-size: inherit; /* フォントサイズも継承 */
-        border: none;
-        background-color: transparent;
-    }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1px;
+}
 
-    .js-dynamic-select {
-        border: none;
-        background-color: transparent;
-        width: 100%;
-    }
-    
-    .main-container {
-      max-width: 765px;
-/*      max-width: 767px; */
-      margin-left: auto;
-      margin-right: auto;
-      
-    }
-    
-    .flex-container{   
-        display:flex ;
-        align-items: center;
-        justify-content: space-between;
-    }
-    #sales-info-tbl th {
-        height: 10px;
-        font-size: 10px;
-        line-height:10px;        
-        padding:0;
-    }
-    #sales-info-tbl th:nth-child(1){ width: 80px;}   /* 受付日 */
-    #sales-info-tbl th:nth-child(2){ width: 80px; }   /* 担当者コード */
-    #sales-info-tbl th:nth-child(3){ width: 80px; }  /* 販売担当者 */
-    #sales-info-tbl th:nth-child(5){width: 100px;}     /* 案件番号 */
-    #sales-info-tbl .space-col{
-        width: 10px;
-        visibility: hidden;
-        border-top: none;
-        border-bottom: none;
-    }
-    
+h1 {
+  font-size: 16px;
+  margin: 0;
+}
 
-    .disclaimer-tbl{
-        width: 100%;
-    }
-    .disclaimer-tbl th{
-        line-height: 10px;
-    }
-    
-    .disclaimer-tbl th:nth-child(2){
-        font-size: 10px;
-        width:50px;
-    }
-    .disclaimer-tbl td:nth-child(1){
-        text-align: left;
-    }
-    .disclaimer-tbl td:nth-child(1),
-    .disclaimer-tbl td:nth-child(2){
-        font-size: 10px;
-    }
+.meta-tables-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
-    .customer-info-container {
-        display: flex;
-        width: 100%;
-    }
-    #customer-tbl {
-        width: 65%;
-    }
-*
-    #customer-tbl td {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    
-    #customer-tbl th {
-        width: 50px;
-    }
-    
-    #customer-tbl tr:nth-child(1) th,
-    #customer-tbl tr:nth-child(1) td {
-        border-bottom: 1px dotted black;
-    }
-    #customer-tbl tr:nth-child(2) th,
-    #customer-tbl tr:nth-child(2) td {
-        border-top: none;
-        
-    }
+.meta-info-tbl {
+  font-size: 11px;
+  width: auto;
+  border-collapse: collapse;
+  border: 1px solid black;
+}
 
-    #customer-tbl_fujigana-1,
-    #customer-tbl_name-1,
-    #customer-tbl_address-1 {
-        border-right:none;
+.meta-info-tbl th {
+  background-color: #f7f7f7;
+  font-weight: normal;
+  line-height: 1.1;
+  border: 1px solid black;
+  padding: 0 !important;
+  vertical-align: middle;
+  text-align: center;
+  height: auto !important;
+}
 
-    }
-    #customer-tbl_fujigana-2,
-    #customer-tbl_name-2,
-    #customer-tbl_address-2 {
-  
-        border-right:none;
-        border-left:none;
-        width: 30px;
-    }
+.meta-info-tbl td {
+  border: 1px solid black;
+  padding: 0 !important;
+  line-height: 1.1;
+  vertical-align: middle;
+  text-align: center;
+  height: 24px !important;
+}
 
-#customer-tbl tr:nth-child(1) td {
-        height: 10px;
-        vertical-align: middle;
-        text-align: left;
-        font-size: 0.8em;
-    }
-    
-    
-    #customer-tbl tr:nth-child(2) td {
-        height: 30px;
-        vertical-align: middle;
-        text-align: left;
-        font-size: 1.0em;
-    }
-    
-    #customer-tbl tr:nth-child(3) td {
-        height: 40px;
-        vertical-align: top;
-        text-align: left;
-        text-decoration: underline;
-    }
+#meta-group-tbl th:nth-child(1), #meta-group-tbl td:nth-child(1) { width: 50px; }
+#meta-group-tbl th:nth-child(2), #meta-group-tbl td:nth-child(2) { width: 50px; }
+#meta-group-tbl th:nth-child(3), #meta-group-tbl td:nth-child(3) { width: 50px; }
+#meta-case-tbl th:nth-child(1), #meta-case-tbl td:nth-child(1) { width: 75px; }
 
-    #tel-fax-tbl {
-        width: 35%;
-    }
-    
-    #tel-fax-tbl tr:nth-child(1) td{
-        width: 50px;
-    }
+.editable-cell {
+  outline: none;
+  flex-grow: 1;
+}
 
-    #tel-fax-tbl {
-        font-size: 10px;
-    }
-    
-#tel-fax-tbl th[rowspan="3"] {
-    /* 縦書きを解除（これが重要！） */
-    writing-mode: horizontal-tb !important;
-    -webkit-writing-mode: horizontal-tb !important;
-    
-    /* 幅を1文字分強に固定して、絶対に右にはみ出させない */
-    width: 20px !important;
-    min-width: 20px !important;
-    max-width: 20px !important;
-    
-    line-height: 1.1;    /* 行間を詰める */
-    letter-spacing: 0;   /* 文字間をリセット */
-    padding: 2px !important;
+.customer-top-row {
+  display: flex;
+  margin-top: 2px;
+  margin-bottom: 1px;
+  gap: 0;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 999;
+  padding: 5px 0;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 4px;
+}
+
+.sticky-header button {
+  appearance: auto;
+  -webkit-appearance: button;
+  background-color: #f0f0f0;
+  border: 1px solid #767676;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.sticky-header button:hover {
+  background-color: #e0e0e0;
+}
+
+#product-tbl th:nth-child(4),
+#product-tbl td.jan-cell {
+    display: none;
+}
+
+#work-tbl th:nth-child(5),
+#work-tbl td.work-janCode {
+    display: none;
+}
+
+#modal-table th:nth-child(1),
+#modal-table td:nth-child(1) {
+    display: none;
+}
+
+/* ▼ 各種テーブルのtdの上下パディングを2pxに指定 ▼ */
+#product-tbl th, #product-tbl td,
+#work-tbl th, #work-tbl td,
+#posa-tbl th, #posa-tbl td,
+#owned-equipment-tbl th, #owned-equipment-tbl td,
+#delivery-info-tbl th, #delivery-info-tbl td {
+    font-size: 12px;
+    font-weight: normal;
+    border: 1px solid black;
+    padding: 2px 1px;
+    line-height: 1.0;
     text-align: center;
     vertical-align: middle;
-    word-break: break-all; /* 万が一の時も強制改行 */
 }
-    
-    #delivery-info-tbl {
-        width: 100%;
-    }
-    #delivery-info-tbl {
-        line-height: 10px;
-    }
-     
-    #delivery-info-tbl th:nth-child(1){ width: 100px; }
-    #delivery-info-tbl th:nth-child(2){ width: 100px; }
-    #delivery-info-tbl th:nth-child(3){ width: 100px; }
-    #delivery-info-tbl th:nth-child(4){ width: 100px; }
-    #delivery-info-tbl th:nth-child(5){ width: 100px; }
-    #delivery-info-tbl th:nth-child(6){ width: 100px; }
-    
-    
 
-    #menu-container tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
+#product-tbl th, #work-tbl th, #posa-tbl th, #owned-equipment-tbl th, #delivery-info-tbl th {
+    background-color: #f2f2f2;
+}
 
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    
-    input[type="text"],
-    input[type="number"] {
-      box-sizing: border-box;
-      width: 100%;
-    }
-    
-    #product-tbl {
-      table-layout: fixed;
-    }
-    #product-tbl th {
-        line-height:10px;
-    }
+#product-tbl, #work-tbl, #posa-tbl, #owned-equipment-tbl, #delivery-info-tbl, .besshi-tbl {
+    border-collapse: collapse;
+    margin-top: 2px !important;
+    margin-bottom: 1px !important;
+    width: 100%;
+    table-layout: fixed;
+    word-break: break-all;
+}
 
-    #product-tbl th:nth-child(1){ width: 25px; }   /*No*/
-    #product-tbl th:nth-child(2){ width: 267px; }  /*型番*/
-    #product-tbl th:nth-child(3){ width: 25px; }   /*数量*/
-    #product-tbl th:nth-child(4){ width: 60px;}    /*単価*/
-    #product-tbl th:nth-child(5){ width: 60px; }   /*金額*/
-    #product-tbl th:nth-child(6){ width: 40px; }   /*保証*/
-    #product-tbl th:nth-child(7){ width: 45px; }   /*商品状態*/
-    #product-tbl th:nth-child(8){ width: 60px; }   /*出庫*/
-    #product-tbl th:nth-child(9){ width: 45px; }   /*在庫店コード*/
-    #product-tbl th:nth-child(10){ width: 45px; }  /*在庫情報*/
-    #product-tbl th:nth-child(11),                 /*発注*/
-    #product-tbl td:nth-child(11){ width: 45px; }
-    #product-tbl th:nth-child(12),                 /*POSA*/
-    #product-tbl td:nth-child(12){ width: 0px; }
-    #product-tbl th:nth-child(13),                 /*削除*/  
-    #product-tbl td:nth-child(13){
-        width: 50px;
-        border: none;
-    }
-    
-    #product-tbl td:nth-child(4),
-    #product-tbl td:nth-child(5){
-       text-align: right;
-       padding-right: 3px;
-       padding-left: 0px;
-    }
-    
-    #product-tbl td:nth-child(2){
-        text-align: left;
-        padding-left: 10px;
-    }
-  
-    #product-tbl th:nth-child(12),
-    #product-tbl td:nth-child(12){
-        display: none;
-    }
-    
-    #product-tbl th:nth-child(13) {
-        visibility:hidden;
-    }
-    
-    #work-tbl .work-barCode {
-        padding: 0px;
-       
-    }
-/*
-    #work-tbl .work-barCode svg {
-        height: 32px;
-        vertical-align:middle;
-    }
-*/
-    #work-tbl th {
-        line-height: 10px;
-    }  
+span.section-title {
+    font-size: 10px;
+    font-weight: bold;
+    display: block;
+    margin-top: 2px !important;
+    margin-bottom: 1px !important;
+    line-height: 1.1;
+}
 
-    #work-tbl th:nth-child(4),
-    #work-tbl td:nth-child(4),
-    #work-tbl th:nth-child(5),
-    #work-tbl td:nth-child(5) {
-        padding: 0;
-      display: none; 
-    }
-    
- /*   #work-tbl {width: 100%;}*/
-    #work-tbl th:nth-child(1){
-        width: 25px;
-        padding-left: 0px;
-        padding-right: 0px;
-        display: none;
-    }
- 
-    #work-tbl td:nth-child(1){
-        display: none;  
-    }
+table select {
+    font-size: 11px;
+    border: none;
+    background: transparent;
+    appearance: none;          
+    -webkit-appearance: none;  
+    -moz-appearance: none;     
+    padding: 0;
+    width: 100%;               
+    text-align-last: center;   
+}
 
-    #work-tbl th:nth-child(2){
-         width: 30px;
-        border-right: none;
-     }
-    #work-tbl th:nth-child(3){
-        border-left: none;
-    }
-    #work-tbl td:nth-child(3){ 
-        width: 230px;
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    #work-tbl th:nth-child(5) ,
-    #work-tbl td:nth-child(5) {width: 50px;}
-    #work-tbl th:nth-child(6) ,
-    #work-tbl td:nth-child(6) {text-align: center;width: 25px;}
-    #work-tbl td:nth-child(7) ,
-    #work-tbl td:nth-child(8) {
-        text-align: right;
-         width: 60px;
-        padding-right: 5px;
-    }
-    #work-tbl th:nth-child(9),
-    #work-tbl td:nth-child(9) {
-        padding: 0;
-        width: 50px;
-    }
+.product-type, .work-item, .posa-type, .owned-equipment-type, .product-model-cell, .owned-serial-cell {
+    white-space: pre-wrap;
+}
 
-    #work-tbl .work-item {text-align: left;}
+/* ▼ 商品・作業・POSAテーブルの単価・金額列を右寄せにし、右側に3pxのパディングを持たせる ▼ */
+#product-tbl td:nth-child(7), #product-tbl td:nth-child(8),
+#work-tbl td:nth-child(8), #work-tbl td:nth-child(9),
+#posa-tbl td:nth-child(5), #posa-tbl td:nth-child(6),
+.price, .total, .work-price, .work-lineTotal, .posa-price, .posa-lineTotal {
+    text-align: right !important;
+    padding-right: 3px !important;
+}
 
-    #work-tbl .work-quantity,
-    #work-tbl .work-price,
-    #work-tbl .work-lineTotal {
-      text-align: right;
-    }
+th.no-border, td.no-border {
+    border: none !important;
+    background-color: transparent !important;
+}
 
-    #work-container {
-        display: flex;
-        align-items: flex-start;
-        gap: 0px;
-    /* align-items: stretch;
-     justify-content: space-between;
-     */
-    }
+.delete-btn-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+.delete-btn-circle:hover {
+    background-color: #ff1a1a;
+}
 
-    #owned-equipment-tbl {
-     width: 100%;
-    /*    width: 505px;*/
-    table-layout: fixed; /* これを記述することで各thのwidthが効くようになる */
-    }
+.add-btn-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+.add-btn-circle:hover {
+    background-color: #0056b3;
+}
 
-    #owned-equipment-tbl th{
-        line-height: 10px;
-    }    
+.table-subtotal {
+    text-align: right;
+    font-weight: bold;
+    font-size: 10px;
+    margin-top: 5px !important;
+    margin-bottom: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    line-height: 1.0;
+}
 
-    #estimate-total-tbl {
-        width: 30%;
-    }
+.normal-group {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: #ffffff;
+    margin-top: 2px;
+    margin-bottom: 1px;
+}
+.normal-group h3 {
+    font-size: 10px;
+    margin: 0 0 1px 0;
+    color: black;
+    padding-bottom: 2px;
+}
 
+.posa-group {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: #ffffff;
+    display: none;
+    margin-top: 2px;
+    margin-bottom: 1px;
+}
+.posa-group h3 {
+    font-size: 10px;
+    margin: 0 0 1px 0;
+    color: black;
+    padding-bottom: 2px;
+}
 
-    
-
-    #owned-equipment-tbl th:nth-child(1),
-    #owned-equipment-tbl td:nth-child(1){
-        width: 25px;
-        padding: 0;
-    }
-    #owned-equipment-tbl th:nth-child(2),
-    #owned-equipment-tbl td:nth-child(2){
-       width: 80px;
-        padding: 0;
-    }
-    #owned-equipment-tbl th:nth-child(3),
-    #owned-equipment-tbl td:nth-child(3){
-       width: 250px;
-        padding: 0;
-        cursor: pointer; /* クリック可能であることを示す */
-    }
-    #owned-equipment-tbl th:nth-child(4),
-    #owned-equipment-tbl td:nth-child(4){
-       width: 130px;
-        padding: 0;
-    }
-
-    #estimate-total-tbl th {
-        font-weight: bold;
-        height: 20px;
-    }
-
-
-    #estimate-total-tbl th:nth-child(1) {
-        border-right: none;
-        width: 0px;
-        padding: 0px;
-        
-    }
-    #estimate-total-tbl th:nth-child(3),
-    #estimate-total-tbl td:nth-child(3) {
-        width: 100px;
-        text-align: right
-    }
-    
-    #estimate-total-tbl tr:nth-child(2) td:nth-child(1),
-    #estimate-total-tbl tr:nth-child(3) td:nth-child(1),
-    #estimate-total-tbl tr:nth-child(4) td:nth-child(1){
-        padding: 0px;
-        border-top: none;
-        border-bottom: none;
-    }
-    #estimate-total-tbl tr:nth-child(5) td:nth-child(1){
-        border-top: none;
-    }
-   
-    #estimate-total-tbl th:nth-child(2){
-        border-left: none;
-        text-align: right;
-        width: 140px;
-        padding-left: 0px;
-    }
-    #estimate-total-tbl tr:nth-child(2) td:nth-child(2),
-    #estimate-total-tbl tr:nth-child(3) td:nth-child(2),
-    #estimate-total-tbl tr:nth-child(4) td:nth-child(2),
-    #estimate-total-tbl tr:nth-child(5) td:nth-child(2) {
-        text-align: right;
-    }
-   /* 
-    .save-load-container {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-    }
-*/
-    #virus-protection-tbl td, #virus-protection-tbl th {
-        border: 1px solid #dddddd;
-        text-align: center;
-        padding: 5px;
-    }
-    #virus-protection-tbl th {
-        background-color: #f2f2f2;
-    }
-    
-    #virus-protection-tbl button {
-        cursor: pointer;
-    }
-    
-    #virus-protection-tbl td:nth-child(3) {
-        text-align: right;
-        padding-left: 0px;
-    }
-    
-    #filter-input {
-        border: 1px solid black;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
-    
-    }
-
-
-    #productList, #owned-product-list {
-        margin-top: 0;
-        list-style: none;
-        padding: 0;
-        max-height: 300px;
-        overflow-y: auto;
-    }
-    
-    #productList li, #owned-product-list li {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        cursor: pointer;
-    }
-
-    #productList li:hover, #owned-product-list li:hover {
-        background-color: #f0f0f0;
-    }
-    h3,h4 {
-        margin: 0;
-    }
-
-    #support-menu-modal table th:nth-child(4),
-    #support-menu-modal table td:nth-child(4) {
-        display: none;
-    }
-
-    .besshi-tbl {
-       border: 1px solid #333; /* 2px、実線、濃い灰色 */
-       width: 100%; /* 幅を適当に設定 */
-       margin: 0px; /* 見やすいように余白を設定 */
-       padding: 0;
-    }
-
-/* 各行のスタイル */
 .besshi-tbl td {
     text-align: left;
-    
-    /* 基本的に下の境界線を点線（dotted）または破線（dashed）にする */
-    /* border-bottom: 1px dotted #999; /* 1px、点線、薄い灰色 */
-     border-bottom: 1px dashed #999; /* 破線にしたい場合はこちら */
+    padding: 4px;
+    line-height: 1.3;
+    border: 1px solid black;
+    font-size: 11px;
 }
-    .customer-table {
-      display: flex;
-      height: 150px;
-      border: 1px solid black;
-      border-right: none;
-      font-size: 10px;
-      align-items: stretch;
-    }
 
-    .column {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 0;
-    }
-    .flexible-column {
-      flex-grow: 1;
-    }
+.grand-total-container {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    align-items: flex-end;
+    width: fit-content;
+    min-width: 250px;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    margin-top: 2px;
+    margin-bottom: 10px;
+}
 
-    .cell {
-      flex-grow: 1;
-      border-right: 1px solid black;
-      border-bottom: 1px solid black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-sizing: border-box;
-    }
-    .column > .cell:last-child {
-      border-bottom: none;
-    }
+.subtotal-row {
+    display: grid;
+    grid-template-columns: 130px 40px 1fr;
+    align-items: center;
+    width: 100%;
+    line-height: 1.1;
+}
+.subtotal-row .label {
+    text-align: left;
+}
+.subtotal-row .sub-label {
+    text-align: right;
+}
+.subtotal-row .amount-wrap {
+    text-align: right;
+    white-space: nowrap;
+}
 
-    .furigana-row {
-      flex-grow: 0;
-      height: 20px;
-      border-bottom-style: dotted;
-    }
-    .name-row {
-      flex-grow: 0;
-      height: 50px;
-    }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 3% auto;
+    padding: 10px 15px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 950px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
 
-    .tel-label-column {
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-      justify-content: center;
-    }
+#support-modal .modal-content {
+    max-width: 600px;
+}
 
-    .content-wrapper {
-      width: 100%;
-      height: 100%;
-      display: flex;
-    }
-    .content-wrapper.align-right {
-      justify-content: flex-end;
-      align-items: center;
-      padding-right: 20px;
-    }
-    .content-wrapper.align-top-left {
-      justify-content: flex-start;
-      align-items: flex-start;
-      padding: 5px;
-    }
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.modal-header h3 {
+    font-size: 14px;
+    margin: 0;
+}
+.close-btn {
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    line-height: 1;
+}
+.modal-body {
+    overflow-y: auto;
+    max-height: 65vh;
+    border: 1px solid #ccc;
+}
+.filter-container {
+    margin-bottom: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 11px;
+}
 
-    .honorific {
-      font-size: 2em;
-    }
-    .postal-code {
-      font-size: 1.5em;
-      text-decoration: underline;
-    }
-    /*印刷以外非表示
-    .hidden-div,
-    .customer-info-container,
-    .flex-container,
-    .disclaimer-div {
-        display: none;
-    }
- */
+.filter-row input[type="search"] {
+    font-size: 11px;
+    padding: 3px 6px;
+    border: 1px solid #767676;
+    border-radius: 3px;
+    background-color: #fff;
+    outline: none;
+}
 
-    #product-tbl td[contenteditable="true"]:focus,
-    #work-tbl td[contenteditable="true"]:focus,
-    #owned-equipment-tbl td[contenteditable="true"]:focus {
-        outline: 2px solid #4CAF50;
-        outline-offset: -2px;
-    }
+.filter-row input[type="search"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
 
-    .collapsing-border-table {
-      border-collapse: collapse;
-      width: 100%;
-    }
+#name-radios {
+    display: flex;
+    gap: 2px 6px;
+    flex-wrap: wrap;
+}
+#name-radios label {
+    font-size: 11px;
+    line-height: 1.0;
+    margin: 0;
+    padding: 0;
+}
 
-    .collapsing-border-table th,
-    .collapsing-border-table td {
-      border: 1px solid #000;
-      padding: 8px;
-    }
-    
-    .context-menu {
-        position: absolute;
-        z-index: 1000;
-        background-color: white;
-        border: 1px solid #ccc;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        padding: 5px 0;
-        list-style: none;
-        cursor: pointer;
-    }
+#modal-table th:nth-child(1), #modal-table td:nth-child(1) { width: 0px; display: none; }
+#modal-table th:nth-child(2), #modal-table td:nth-child(2) { width: 80px; }
+#modal-table th:nth-child(3), #modal-table td:nth-child(3) { width: auto; }
+#modal-table th:nth-child(4), #modal-table td:nth-child(4) { width: 65px; }
+#modal-table th:nth-child(5), #modal-table td:nth-child(5) { width: 65px; }
+#modal-table th:nth-child(6), #modal-table td:nth-child(6) { width: 95px; }
+#modal-table th:nth-child(7), #modal-table td:nth-child(7) { width: 100px; }
 
-    .context-menu ul {
+#measure-modal-table th:nth-child(1), #measure-modal-table td:nth-child(1) { width: auto; }
+#measure-modal-table th:nth-child(2), #measure-modal-table td:nth-child(2) { width: 80px; }
+#measure-modal-table th:nth-child(3), #measure-modal-table td:nth-child(3) { width: 100px; }
+#measure-modal-table th:nth-child(4), #measure-modal-table td:nth-child(4) { width: 80px; text-align: right; }
+#measure-modal-table th:nth-child(5), #measure-modal-table td:nth-child(5) { width: 90px; text-align: center; }
+#measure-modal-table th:nth-child(6), #measure-modal-table td:nth-child(6) { width: 90px; text-align: center; }
+
+#support-modal-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#support-modal-table th:nth-child(1), #support-modal-table td:nth-child(1) { width: 20px; text-align: center; }
+#support-modal-table th:nth-child(2), #support-modal-table td:nth-child(2) { width: 70px; text-align: center; }
+#support-modal-table th:nth-child(3), #support-modal-table td:nth-child(3) { 
+    width: auto; 
+    white-space: normal; 
+    word-break: break-all; 
+}
+#support-modal-table th:nth-child(4), #support-modal-table td:nth-child(4) { width: 80px; text-align: right; }
+#support-modal-table th:nth-child(5), #support-modal-table td:nth-child(5) { width: 55px; text-align: center; }
+#support-modal-table th:nth-child(6), #support-modal-table td:nth-child(6) { width: 55px; text-align: center; }
+
+#modal-table th, #modal-table td,
+#measure-modal-table th, #measure-modal-table td,
+#support-modal-table th, #support-modal-table td {
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+    font-size: 11px;
+    line-height: 1.1;
+    border: 1px solid #ccc;
+}
+
+#modal-table tr:hover, #measure-modal-table tr:hover:not(.hidden), #support-modal-table tr:hover:not(.hidden) {
+    background-color: #f1f1f1;
+}
+#modal-table tr.selected, #measure-modal-table tr.selected, #support-modal-table tr.selected {
+    background-color: #d0e8ff !important;
+}
+.barcode-svg {
+    height: 20px;
+    max-width: 130px;
+    vertical-align: middle;
+    width: 100%;
+    object-fit: fill;
+}
+
+#product-tbl th:nth-child(1), #product-tbl td:nth-child(1) { width: 20px; }
+#product-tbl th:nth-child(2), #product-tbl td:nth-child(2) { width: 20px; }
+#product-tbl th:nth-child(3), #product-tbl td:nth-child(3) { width: auto; }
+#product-tbl th:nth-child(4), #product-tbl td:nth-child(4) { width: 0px; display: none; }
+#product-tbl th:nth-child(5), #product-tbl td:nth-child(5) { width: 130px; }
+#product-tbl th:nth-child(6), #product-tbl td:nth-child(6) { width: 30px; }
+#product-tbl th:nth-child(7), #product-tbl td:nth-child(7) { width: 50px; }
+#product-tbl th:nth-child(8), #product-tbl td:nth-child(8) { width: 50px; }
+#product-tbl th:nth-child(9), #product-tbl td:nth-child(9) { width: 30px; }
+#product-tbl th:nth-child(10), #product-tbl td:nth-child(10) { width: 30px; }
+#product-tbl th:nth-child(11), #product-tbl td:nth-child(11) { width: 45px; }
+#product-tbl th:nth-child(12), #product-tbl td:nth-child(12) { width: 45px; }
+#product-tbl th:nth-child(13), #product-tbl td:nth-child(13) { width: 45px; }
+#product-tbl th:nth-child(14), #product-tbl td:nth-child(14) { width: 30px; }
+#product-tbl th:nth-child(15), #product-tbl td:nth-child(15) { width: 30px; }
+
+#work-tbl th:nth-child(1), #work-tbl td:nth-child(1) { width: 20px; }
+#work-tbl th:nth-child(2), #work-tbl td:nth-child(2) { width: 20px; }
+#work-tbl th:nth-child(3), #work-tbl td:nth-child(3) { width: 60px; }
+#work-tbl th:nth-child(4), #work-tbl td:nth-child(4) { width: auto; }
+#work-tbl th:nth-child(5), #work-tbl td:nth-child(5) { width: 0px; display:none; }
+#work-tbl th:nth-child(6), #work-tbl td:nth-child(6) { width: 130px; }
+#work-tbl th:nth-child(7), #work-tbl td:nth-child(7) { width: 30px; }
+#work-tbl th:nth-child(8), #work-tbl td:nth-child(8) { width: 50px; }
+#work-tbl th:nth-child(9), #work-tbl td:nth-child(9) { width: 50px; }
+#work-tbl th:nth-child(10), #work-tbl td:nth-child(10) { width: 30px; }
+
+#posa-tbl { width: 500px; }   
+#posa-tbl th:nth-child(1), #posa-tbl td:nth-child(1) { width: 20px; }
+#posa-tbl th:nth-child(2), #posa-tbl td:nth-child(2) { width: 20px; }
+#posa-tbl th:nth-child(3), #posa-tbl td:nth-child(3) { width: 250px; }
+#posa-tbl th:nth-child(4), #posa-tbl td:nth-child(4) { width: 30px; }
+#posa-tbl th:nth-child(5), #posa-tbl td:nth-child(5) { width: 50px; }
+#posa-tbl th:nth-child(6), #posa-tbl td:nth-child(6) { width: 50px; }
+#posa-tbl th:nth-child(7), #posa-tbl td:nth-child(7) { width: 30px; }
+
+#owned-equipment-tbl th:nth-child(1), #owned-equipment-tbl td:nth-child(1) { width: 20px; }
+#owned-equipment-tbl th:nth-child(2), #owned-equipment-tbl td:nth-child(2) { width: 20px; }
+#owned-equipment-tbl th:nth-child(3), #owned-equipment-tbl td:nth-child(3) { width: 150px; }
+#owned-equipment-tbl th:nth-child(4), #owned-equipment-tbl td:nth-child(4) { width: auto; }
+#owned-equipment-tbl th:nth-child(5), #owned-equipment-tbl td:nth-child(5) { width: 140px; }
+#owned-equipment-tbl th:nth-child(6), #owned-equipment-tbl td:nth-child(6) { width: 30px; }
+
+#customer-tbl, #tel-tbl, #address-tbl, .disclaimer-tbl {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0;
+}
+
+#customer-tbl th, #customer-tbl td,
+#tel-tbl th, #tel-tbl td,
+#address-tbl th, #address-tbl td,
+.disclaimer-tbl th, .disclaimer-tbl td {
+  border: 1px solid black;
+  vertical-align: middle;
+}
+
+#customer-tbl th, #tel-tbl th, #address-tbl th, .disclaimer-tbl th {
+  background-color: #f7f7f7;
+  text-align: center;
+  border-top: none;
+  border-left: none;
+}
+
+#customer-tbl td, #tel-tbl td, #address-tbl td, .disclaimer-tbl td {
+  border-top: none;
+  border-right: none;
+}
+
+#customer-tbl th, #address-tbl th {
+  width: 70px !important;
+}
+
+#customer-tbl {
+  flex: 1;
+  border: 1px solid black;
+  border-bottom: none;
+  border-right: none;
+}
+
+#customer-tbl tr.furigana-row th {
+  border-top: none !important;
+  border-left: 1px solid black !important;
+  border-right: 1px solid black !important;
+  border-bottom: none !important;
+  font-size: 9px;
+  font-weight: normal;
+  color: #666;
+  padding: 0 2px !important;
+  height: 12px;
+  line-height: 1;
+}
+#customer-tbl tr.furigana-row td {
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid #ccc !important;
+  padding: 0 4px !important;
+  height: 12px;
+  line-height: 1;
+}
+.furigana-input {
+  width: 100%;
+  font-size: 9px;
+  min-height: 12px;
+}
+
+#customer-tbl tr.name-row th {
+  border-top: none !important;
+  border-left: 1px solid black !important;
+  border-right: 1px solid black !important;
+  border-bottom: 1px solid black !important;
+  padding: 2px 8px !important;
+  height: 24px;
+}
+#customer-tbl tr.name-row td {
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid black !important;
+  height: 24px;
+  padding: 2px 8px !important;
+}
+.name-input-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.name-cell {
+  min-height: 18px;
+}
+.sama-text {
+  padding-left: 8px;
+  font-weight: normal;
+}
+
+#tel-tbl {
+  width: 237px;
+  border: 1px solid black;
+  border-bottom: none;
+  border-left: none;
+}
+#tel-tbl th {
+  width: 50px;
+  border-top: none !important;
+  border-right: none !important;
+  border-left: 1px solid black !important;
+  padding: 0 6px !important;
+}
+#tel-tbl td {
+  border-top: none !important;
+  border-right: 1px solid black !important;
+  padding: 0 8px !important;
+}
+#tel-tbl tr:nth-child(1) th,
+#tel-tbl tr:nth-child(1) td {
+  height: 12px !important;
+  border-top: none !important;
+  border-bottom: 1px solid black !important;
+}
+#tel-tbl tr:nth-child(2) th,
+#tel-tbl tr:nth-child(2) td {
+  height: 24px !important;
+  border-top: none !important;
+  border-bottom: 1px solid black !important;
+}
+
+#address-tbl {
+  border: 1px solid black;
+  /*border-top: 1px solid black;*/
+  border-top: none;
+  border-bottom: none;
+  margin-top: -2px;
+  margin-bottom: 1px;
+}
+#address-tbl th {
+  vertical-align: middle;
+  text-align: center;
+  border-top: none !important;
+  border-left: 1px solid black !important;
+  border-right: 1px solid black !important;
+  border-bottom: 1px solid black !important;
+  background-color: #f7f7f7;
+}
+
+#address-tbl tr.zip-row th {
+  height: 8px !important;
+  padding: 0 8px !important;
+}
+#address-tbl tr.zip-row td {
+  height: 8px !important;
+  padding: 0 8px !important;
+  border-top: 1px solid black !important;
+  border-bottom: none !important;
+  border-right: 1px solid black !important;
+}
+.zip-input-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-height: 12px;
+  padding-top: 1px;
+}
+.zip-symbol {
+  user-select: none;
+  font-weight: normal;
+  margin-right: 4px;
+  line-height: 1;
+}
+#zip-input {
+  font-size: 11px;
+  line-height: 1;
+}
+
+#address-tbl tr.street-row th {
+  padding: 4px 8px;
+}
+#address-tbl tr.street-row td {
+  border-top: none !important; 
+  border-bottom: 1px solid black !important;
+  border-right: 1px solid black !important;
+  padding: 4px 8px;
+  min-height: 22px;
+}
+
+.disclaimer-tbl {
+  margin-top: 2px;
+  margin-bottom: 1px;
+  border: 1px solid black;
+}
+.disclaimer-tbl th {
+  font-size: 10px;
+  line-height: 1.1;
+  padding: 0;
+  border-top: none;
+  border-left: none;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+.disclaimer-tbl th:nth-child(2) {
+  width: 60px;
+  border-top: none;
+  border-left: 1px solid black;
+  border-right: none;
+  border-bottom: 1px solid black;
+  text-align: center;
+} 
+.disclaimer-tbl td {
+  font-size: 10px;
+  padding: 1px 3px;
+  line-height: 1.2;
+  border-top: none;
+  border-left: none;
+  border-right: 1px solid black;
+  border-bottom: none;
+  text-align: left;
+}
+.disclaimer-tbl td:nth-child(2) {
+  border-right: none;
+  text-align: center;
+}
+
+.custom-context-menu {
+  display: none;
+  position: absolute;
+  z-index: 2000;
+  background: #fff;
+  border: 1px solid #767676;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  font-size: 11px;
+  min-width: 180px;
+  padding: 2px 0;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.custom-context-menu .menu-item {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.custom-context-menu .menu-item:hover, .custom-context-menu .menu-item.selected-item {
+  background-color: #e6f0ff;
+}
+.custom-context-menu .menu-item.selected-item::before {
+  content: "✓ ";
+  font-weight: bold;
+  color: #007bff;
+}
+.custom-context-menu .menu-separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 2px 0;
+}
+
+.coupon-memo {
+  font-size: 9px;
+  color: #666;
+  margin-top: 1px;
+}
+.menu-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+}
+.apply-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.apply-btn:hover {
+  background-color: #0056b3;
+}
+
+.row-no, .posa-no, .work-no, .owned-no {
+    cursor: grab;
+    user-select: none;
+}
+.row-no:active, .posa-no:active, .work-no:active, .owned-no:active {
+    cursor: grabbing;
+}
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #c8ebfb !important;
+}
+
+@media print {
+    body {
         margin: 0;
         padding: 0;
-        list-style: none;
     }
-
-    .context-menu li {
-        padding: 8px 12px;
-    }
-
-    .context-menu li:hover {
-        background-color: #f0f0f0;
-    }
-    
-
-
-/*
- * 全てのモーダル共通のホバーエフェクト
- * ----------------------------------------------------
- */
-
-/* 1. リストアイテム (li) のホバーエフェクト（商品・保証などのモーダル） */
-.modal ul li {
-    /* 選択しやすいようにカーソルをポインターに変更 */
-    cursor: pointer;
-    /* transitionを追加すると、色の変化が滑らかになります（任意） */
-    transition: background-color 0.2s ease; 
-}
-.modal ul li:hover {
-    /* マウスオーバー時に背景色を黄緑に変更 */
-    background-color: #ccffcc; /* ← この部分を黄緑色に修正 */
-}
-
-/* 2. サポートメニュー（テーブル行 tr）のホバーエフェクト */
-#support-menu-modal #service-list-body tr {
-    /* 選択しやすいようにカーソルをポインターに変更 */
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-/* 修正箇所: tr:hoverだけでなく、tr:hover tdも指定する */
-#support-menu-modal #service-list-body tr:hover,
-#support-menu-modal #service-list-body tr:hover td {
-    /* 行全体とセルに同じ黄緑色の背景色を適用 */
-    background-color: #ccffcc; /* ← この部分を黄緑色に修正 */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    @media print {
-            
-    .no-break-div {
-        page-break-inside: avoid !important; /* 優先度を上げるために !important を追加 */
-        break-inside: avoid; /* 新しいブラウザ向けに追加 */
-    }      
-
-
-      button,
-     .toggle-state-button,
-     .delete-button,
-     .delete-work-button,
-     .open-modal-btn,
-     #add-row-btn {
+    /*
+    #product-tbl th:nth-child(9),
+    #product-tbl td:nth-child(9) {
         display: none !important;
-     }
-        #product-tbl {
-          width: 100%;
-        table-layout: fixed;
-        }
-
-    
-
-
-        #product-tbl th:nth-child(6),
-        #product-tbl td:nth-child(6) {
-            display: none;
-        }
-        #product-tbl th:nth-child(12),
-        #product-tbl td:nth-child(12),
-        #product-tbl th:nth-child(13),
-        #product-tbl td:nth-child(13) {
-            display: none;
-        }
-        #work-tbl th:nth-child(5),
-        #work-tbl td:nth-child(5) {
-            display: table-cell;
-            border-left: none;
-        }
-        #work-tbl th:nth-child(3),
-        #work-tbl td:nth-child(3) {
-            border-right: none;
-            padding-left: 0px;
-            padding-right: 0px;
-
-        }
-
-
-
-        #work-tbl th:nth-child(9),
-        #work-tbl td:nth-child(9) {
-            display: none;
-        }
-    /* 印刷時は表示 */
-    
-    .hidden-div,
-    .customer-info-container,
-    .flex-container,
-    .disclaimer-div {
-        display: flex;
     }
-        
-     /* selectボックスの矢印を非表示にするための追加スタイル */
-    select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
+    */
+    th.no-border,
+    td.no-border,
+    button,
+    .sticky-header {
+        display: none !important;
     }
-
-/* --- ここからドラッグ＆ドロップ用の追加設定（既存のコードは消さないでください） --- */
-#product-tbl tbody tr {
-    cursor: move; /* 掴めるカーソルに変更 */
-}
-
-/* ドラッグ中の行の見た目 */
-.dragging {
-    opacity: 0.5;
-    background-color: #f9f9f9 !important;
-    outline: 1px dashed #999;
-}
-
-/* 挿入位置を示す青い線 */
-.drag-over {
-    border-top: 2px solid #007bff !important;
-}
-    
-/* --- スムーズなドラッグ移動用の演出 --- */
-.sortable-ghost {
-    opacity: 0.3;
-    background-color: #cbd5e0 !important;
-}
-
-.sortable-chosen {
-    background-color: #ebf8ff !important;
-}
-
-.sortable-drag {
-    opacity: 0.9;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-#product-tbl tbody tr {
-    cursor: grab;
-    transition: transform 0.2s; /* 入れ替わりのアニメーション速度 */
-}
-
-#product-tbl tbody tr:active {
-    cursor: grabbing;
-}
-
-/* --- 作業メニューもドラッグ可能にする --- */
-#product-tbl tbody tr,
-#work-tbl tbody tr {
-    cursor: grab;
-    transition: transform 0.15s; /* 入れ替わりのアニメーション */
-}
-
-#product-tbl tbody tr:active,
-#work-tbl tbody tr:active {
-    cursor: grabbing;
-}
-
-/* ドラッグ中の見た目（共通） */
-.sortable-ghost {
-    opacity: 0.3;
-    background-color: #cbd5e0 !important;
-}
-
-.sortable-chosen {
-    background-color: #ebf8ff !important;
 }
