@@ -6,6 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     const loadBtn = document.getElementById('load-btn');
 
+    // 受付日の文字列（例: "10/25" や "2026/10/25" 等）からファイル名用の YYYYMMDD を生成する関数
+    function getFormattedDateString() {
+        const receptionDateText = document.getElementById('reception-date-cell')?.innerText.trim() || '';
+        const now = new Date();
+        let yyyy = now.getFullYear();
+        let mm = String(now.getMonth() + 1).padStart(2, '0');
+        let dd = String(now.getDate()).padStart(2, '0');
+
+        if (receptionDateText.includes('/')) {
+            const parts = receptionDateText.split('/');
+            if (parts.length >= 2) {
+                const m = parts[parts.length - 2].trim();
+                const d = parts[parts.length - 1].trim();
+                if (!isNaN(m) && !isNaN(d)) {
+                    mm = String(m).padStart(2, '0');
+                    dd = String(d).padStart(2, '0');
+                }
+            }
+        }
+
+        return `${yyyy}${mm}${dd}`;
+    }
+
     // アプリケーションの状態をJSONオブジェクトにまとめる関数
     function captureAppState() {
         return {
@@ -126,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tbody && template) {
                 tbody.querySelectorAll('tr.product-row:not(#product-row-template)').forEach(tr => tr.remove());
                 
-                data.forEach(p => {
+                data.products.forEach(p => {
                     const clone = template.cloneNode(true);
                     clone.removeAttribute('id');
                     clone.className = 'product-row';
@@ -161,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tbody && template) {
                 tbody.querySelectorAll('tr.work-row:not(#work-row-template)').forEach(tr => tr.remove());
 
-                data.forEach(w => {
+                data.works.forEach(w => {
                     const clone = template.cloneNode(true);
                     clone.removeAttribute('id');
                     clone.className = 'work-row';
@@ -188,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tbody && template) {
                 tbody.querySelectorAll('tr.posa-row:not(#posa-row-template)').forEach(tr => tr.remove());
 
-                data.forEach(po => {
+                data.posa.forEach(po => {
                     const clone = template.cloneNode(true);
                     clone.removeAttribute('id');
                     clone.className = 'posa-row';
@@ -219,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tbody && template) {
                 tbody.querySelectorAll('tr.owned-equipment-row:not(#owned-equipment-row-template)').forEach(tr => tr.remove());
 
-                data.forEach(oe => {
+                data.ownedEquipment.forEach(oe => {
                     const clone = template.cloneNode(true);
                     clone.removeAttribute('id');
                     clone.className = 'owned-equipment-row';
@@ -245,17 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof calculateTotals === 'function') calculateTotals();
     }
 
-    // 保存ボタンクリック時の処理 (OS標準UI: File System Access API)
+    // 保存ボタンクリック時の処理 (OS標準UI)
     if (saveBtn) {
         saveBtn.addEventListener('click', async () => {
             const appData = captureAppState();
             const jsonString = JSON.stringify(appData, null, 2);
+            const dateStr = getFormattedDateString();
+            const defaultFileName = `商談メモ${dateStr}.json`;
 
-            // File System Access APIが利用可能な場合 (Chrome, Edgeなど)
             if (window.showSaveFilePicker) {
                 try {
                     const options = {
-                        suggestedName: 'support_memo.json',
+                        suggestedName: defaultFileName,
                         types: [{
                             description: 'JSON ファイル',
                             accept: { 'application/json': ['.json'] }
@@ -263,24 +287,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     const handle = await window.showSaveFilePicker(options);
                     const writable = await handle.createWritable();
-                    await writable.write(jsonString);
+                    await writable.write(new Blob([jsonString], { type: 'application/json' }));
                     await writable.close();
                     alert('ファイルを保存しました。');
                     return;
                 } catch (err) {
-                    if (err.name !== 'AbortError') {
-                        console.error('保存エラー:', err);
-                    }
-                    return;
+                    if (err.name === 'AbortError') return;
                 }
             }
 
-            // フォールバック（従来方式）
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'support_memo.json';
+            a.download = defaultFileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -288,10 +308,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 読込ボタンクリック時の処理 (OS標準UI: File System Access API または input[type="file"])
+    // 読込ボタンクリック時の処理 (OS標準UI & フォールバック)
     if (loadBtn) {
         loadBtn.addEventListener('click', async () => {
-            // File System Access APIが利用可能な場合
             if (window.showOpenFilePicker) {
                 try {
                     const options = {
@@ -304,19 +323,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     const [handle] = await window.showOpenFilePicker(options);
                     const file = await handle.getFile();
                     const text = await file.text();
-                    const data = JSON.parse(text);
-                    restoreAppState(data);
-                    alert('ファイルを読み込みました。');
-                    return;
-                } catch (err) {
-                    if (err.name !== 'AbortError') {
-                        console.error('読込エラー:', err);
+                    
+                    try {
+                        const data = JSON.parse(text);
+                        restoreAppState(data);
+                        alert('ファイルを読み込みました。');
+                        return;
+                    } catch (parseErr) {
+                        alert('ファイルの読み込みに失敗しました（JSONパースエラー）。有効なJSONファイルではありません。');
+                        console.error('JSON Parse Error:', parseErr);
+                        return;
                     }
-                    return;
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
                 }
             }
 
-            // フォールバック（従来方式: input[type="file"]）
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
             fileInput.accept = '.json';
@@ -330,8 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         restoreAppState(data);
                         alert('ファイルを読み込みました。');
                     } catch (err) {
-                        alert('ファイルの読み込みに失敗しました（JSONパースエラー）。');
-                        console.error(err);
+                        alert('ファイルの読み込みに失敗しました（JSONパースエラー）。有効なJSONファイルではありません。');
+                        console.error('JSON Parse Error:', err);
                     }
                 };
                 reader.readAsText(file);
