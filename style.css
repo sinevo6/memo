@@ -336,7 +336,7 @@ th.no-border, td.no-border {
     padding: 10px 15px;
     border: 1px solid #888;
     width: 90%;
-    max-width: 950px;
+    max-width: 650px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
@@ -424,13 +424,14 @@ th.no-border, td.no-border {
 #measure-modal-table th:nth-child(5), #measure-modal-table td:nth-child(5) { width: 90px; text-align: center; }
 #measure-modal-table th:nth-child(6), #measure-modal-table td:nth-child(6) { width: 90px; text-align: center; }
 
+
 #support-modal-table {
     table-layout: fixed;
-    width: 100%;
+    min-width: 100px;
 }
 
-#support-modal-table th:nth-child(1), #support-modal-table td:nth-child(1) { width: 20px; text-align: center; }
-#support-modal-table th:nth-child(2), #support-modal-table td:nth-child(2) { width: 70px; text-align: center; }
+#support-modal-table th:nth-child(1), #support-modal-table td:nth-child(1) { width: 0px; text-align: center; }
+#support-modal-table th:nth-child(2), #support-modal-table td:nth-child(2) { width: 70px;text-align: left; }
 #support-modal-table th:nth-child(3), #support-modal-table td:nth-child(3) { 
     width: auto; 
     white-space: normal; 

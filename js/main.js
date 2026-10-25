@@ -164,7 +164,7 @@ window.addEventListener('DOMContentLoaded', () => {
     makeModalDraggable('#support-modal');
 });
 
-// モーダルをドラッグして移動できるようにする関数
+// モーダルをドラッグして移動できるようにする関数（ポインターイベント対応でiPad等でも動作）
 function makeModalDraggable(modalSelector) {
     const modal = document.querySelector(modalSelector);
     if (!modal) return;
@@ -173,11 +173,12 @@ function makeModalDraggable(modalSelector) {
     if (!content || !header) return;
 
     header.style.cursor = 'move';
+    header.style.touchAction = 'none'; // タッチ時のスクロール等のデフォルト動作を防止
 
     let isDragging = false;
     let startX, startY, initialLeft, initialTop;
 
-    header.addEventListener('mousedown', (e) => {
+    header.addEventListener('pointerdown', (e) => {
         if (e.target.closest('button')) return; // 閉じるボタン等のクリック時は除外
         isDragging = true;
         startX = e.clientX;
@@ -192,10 +193,13 @@ function makeModalDraggable(modalSelector) {
         initialLeft = rect.left;
         initialTop = rect.top;
 
+        // ポインターをキャプチャして指やマウスが枠外に出ても追跡できるようにする
+        header.setPointerCapture(e.pointerId);
+
         e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    header.addEventListener('pointermove', (e) => {
         if (!isDragging) return;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
@@ -203,7 +207,14 @@ function makeModalDraggable(modalSelector) {
         content.style.top = (initialTop + dy) + 'px';
     });
 
-    document.addEventListener('mouseup', () => {
+    const stopDragging = (e) => {
+        if (!isDragging) return;
         isDragging = false;
-    });
+        try {
+            header.releasePointerCapture(e.pointerId);
+        } catch (err) {}
+    };
+
+    header.addEventListener('pointerup', stopDragging);
+    header.addEventListener('pointercancel', stopDragging);
 }

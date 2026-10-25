@@ -41,7 +41,6 @@
           <td class="editable-cell" id="reception-date-cell" contenteditable="true"></td>
           <td class="editable-cell" contenteditable="true">
             <select>
-
                 <option></option>
                 <option>鴨下</option>
                 <option>熊谷</option>
@@ -392,9 +391,13 @@
               <div class="filter-row">
                   <label>キーワード検索: <input type="search" id="search-keyword" placeholder="型番/インストア"></label>
               </div>
-              <div class="filter-row">
+              <div class="filter-row" style="align-items: flex-start;">
+                  <span>メーカーフィルター:</span>
+                  <div id="maker-checkboxes" style="display: flex; gap: 2px 6px; flex-wrap: wrap;"></div>
+              </div>
+              <div class="filter-row" style="align-items: flex-start;">
                   <span>名称フィルター:</span>
-                  <div id="name-radios"></div>
+                  <div id="name-checkboxes" style="display: flex; gap: 2px 6px; flex-wrap: wrap;"></div>
               </div>
           </div>
           <div class="modal-body">
@@ -519,6 +522,7 @@
   <script src="js/table.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/set_menu.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

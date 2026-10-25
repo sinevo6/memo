@@ -9,7 +9,6 @@ const modal = document.getElementById('product-modal');
 const btnOpen = document.getElementById('product-list');
 const btnClose = document.getElementById('close-modal');
 const modalTbody = document.getElementById('modal-tbody');
-const nameRadiosContainer = document.getElementById('name-radios');
 const searchKeywordInput = document.getElementById('search-keyword');
 
 // 選択状態管理用（JANコードまたは商品・施策名等を保持）
@@ -25,7 +24,7 @@ if (btnOpen) {
                 skipEmptyLines: true,
                 complete: function(results) {
                     parseCSVData(results.data);
-                    buildNameRadios();
+                    buildFilters();
                     renderModalTable(allProductData);
                 },
                 error: function(error) {
@@ -45,6 +44,13 @@ function closeProductModal() {
 }
 if (btnClose) btnClose.addEventListener('click', closeProductModal);
 
+function zenToHan(str) {
+    if (!str) return '';
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+}
+
 function parseCSVData(rows) {
     allProductData = [];
     rows.forEach(item => {
@@ -53,36 +59,53 @@ function parseCSVData(rows) {
             cleanItem[key.trim()] = item[key] !== undefined ? String(item[key]).trim() : '';
         });
 
-        const nameVal = cleanItem['名称'] || cleanItem['商品名'] || '';
+        const nameVal = zenToHan(cleanItem['名称'] || cleanItem['商品名'] || '');
         if (nameVal === 'END') return;
-        const modelVal = cleanItem['型番'] || '';
+        const modelVal = zenToHan(cleanItem['型番'] || '');
         if (!nameVal && !modelVal) return;
+
+        const makerVal = zenToHan(cleanItem['メーカー'] || cleanItem['ﾒｰｶｰ'] || '');
 
         let janVal = cleanItem['JANｺｰﾄﾞ'] || cleanItem['JANコード'] || cleanItem['JAN'] || '';
         if (!janVal) janVal = 'POSA';
 
         allProductData.push({
             name: nameVal,
-            maker: cleanItem['メーカー'] || cleanItem['ﾒｰｶｰ'] || '',
+            maker: makerVal,
             model: modelVal,
-            storeCode: cleanItem['ｲﾝｽﾄｱｺｰﾄﾞ'] || cleanItem['インストアコード'] || '',
+            storeCode: zenToHan(cleanItem['ｲﾝｽﾄｱｺｰﾄﾞ'] || cleanItem['インストアコード'] || ''),
             price: cleanItem['ｹｰｽﾞ売価'] || cleanItem['ケーズ売価'] || cleanItem['売価'] || cleanItem['金額'] || '',
-            jan: janVal,
-            memo: cleanItem['備考'] || ''
+            jan: zenToHan(janVal),
+            memo: zenToHan(cleanItem['備考'] || '')
         });
     });
 }
 
-function buildNameRadios() {
-    if (!nameRadiosContainer) return;
+function buildFilters() {
+    const makerContainer = document.getElementById('maker-checkboxes');
+    const nameContainer = document.getElementById('name-checkboxes');
+    if (!makerContainer || !nameContainer) return;
+
+    const makers = [...new Set(allProductData.map(item => item.maker))].filter(Boolean).sort();
     const names = [...new Set(allProductData.map(item => item.name))].filter(Boolean);
-    let html = '<label><input type="radio" name="name-filter" value="" checked> 全て</label>';
-    names.forEach(name => {
-        html += `<label><input type="radio" name="name-filter" value="${name}"> ${name}</label>`;
+
+    let makerHtml = '';
+    makers.forEach(maker => {
+        makerHtml += `<label style="font-size: 11px; line-height: 1.0; margin: 0; padding: 0; cursor: pointer;"><input type="checkbox" name="maker-filter" value="${maker}"> ${maker}</label>`;
     });
-    nameRadiosContainer.innerHTML = html;
-    document.querySelectorAll('input[name="name-filter"]').forEach(radio => {
-        radio.addEventListener('change', filterAndRender);
+    makerContainer.innerHTML = makerHtml;
+
+    let nameHtml = '';
+    names.forEach(name => {
+        nameHtml += `<label style="font-size: 11px; line-height: 1.0; margin: 0; padding: 0; cursor: pointer;"><input type="checkbox" name="name-filter" value="${name}"> ${name}</label>`;
+    });
+    nameContainer.innerHTML = nameHtml;
+
+    document.querySelectorAll('input[name="maker-filter"]').forEach(chk => {
+        chk.addEventListener('change', filterAndRender);
+    });
+    document.querySelectorAll('input[name="name-filter"]').forEach(chk => {
+        chk.addEventListener('change', filterAndRender);
     });
 }
 
@@ -96,15 +119,20 @@ function normalizeStr(str) {
 }
 
 function filterAndRender() {
-    const selectedName = document.querySelector('input[name="name-filter"]:checked')?.value || '';
+    const selectedMakers = Array.from(document.querySelectorAll('input[name="maker-filter"]:checked')).map(el => el.value);
+    const selectedNames = Array.from(document.querySelectorAll('input[name="name-filter"]:checked')).map(el => el.value);
+    
     const rawKeyword = searchKeywordInput ? searchKeywordInput.value.trim() : '';
-    const keyword = normalizeStr(rawKeyword);
+    const keywords = rawKeyword ? rawKeyword.split(/\s+/).map(k => normalizeStr(k)).filter(Boolean) : [];
 
     const filtered = allProductData.filter(item => {
-        const matchesName = !selectedName || item.name === selectedName;
+        const matchesMaker = selectedMakers.length === 0 || selectedMakers.includes(item.maker);
+        const matchesName = selectedNames.length === 0 || selectedNames.includes(item.name);
+        
         const targetText = normalizeStr(item.name + ' ' + item.maker + ' ' + item.model + ' ' + item.storeCode + ' ' + item.price + ' ' + item.jan + ' ' + item.memo);
-        const matchesKeyword = !keyword || targetText.includes(keyword);
-        return matchesName && matchesKeyword;
+        const matchesKeywords = keywords.length === 0 || keywords.every(kw => targetText.includes(kw));
+
+        return matchesMaker && matchesName && matchesKeywords;
     });
     renderModalTable(filtered);
 }
@@ -536,8 +564,8 @@ function clearModalState(type) {
     if (type === 'product') {
         selectedProductKeys.clear();
         if (searchKeywordInput) searchKeywordInput.value = '';
-        const allRadio = document.querySelector('input[name="name-filter"][value=""]');
-        if (allRadio) allRadio.checked = true;
+        document.querySelectorAll('input[name="maker-filter"]').forEach(el => el.checked = false);
+        document.querySelectorAll('input[name="name-filter"]').forEach(el => el.checked = false);
         renderModalTable(allProductData);
     } else if (type === 'measure') {
         selectedMeasureKeys.clear();
