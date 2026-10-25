@@ -191,8 +191,13 @@ function generateBarcodesForContainer(containerSelector) {
         const janCell = tr.querySelector('.jan-cell, .work-janCode');
         const svgElem = tr.querySelector('.barcode-svg');
         if (janCell && svgElem) {
-            const janText = janCell.textContent.trim();
+            let janText = janCell.textContent.trim();
             if (janText && janText !== 'POSA' && /^\d+$/.test(janText)) {
+                // JANコードが12桁の場合は左に0を加えて13桁にする
+                if (janText.length === 12) {
+                    janText = '0' + janText;
+                }
+
                 try {
                     JsBarcode(svgElem, janText, {
                         format: janText.length === 8 ? "EAN8" : "EAN13",
