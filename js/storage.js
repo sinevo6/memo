@@ -31,11 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // アプリケーションの状態をJSONオブジェクトにまとめる関数
     function captureAppState() {
+        const metaSelects = document.querySelectorAll('#meta-group-tbl select');
+        const deliverySelects = document.querySelectorAll('#delivery-info-tbl select');
+
         return {
             meta: {
                 receptionDate: document.getElementById('reception-date-cell')?.innerText || '',
-                salesStaff: document.querySelector('#meta-group-tbl select:nth-of-type(1)')?.value || '',
-                acStaff: document.querySelector('#meta-group-tbl select:nth-of-type(2)')?.value || '',
+                salesStaff: metaSelects[0]?.value || '',
+                acStaff: metaSelects[1]?.value || '',
                 caseNumber: document.querySelector('#meta-case-tbl td')?.innerText || ''
             },
             customer: {
@@ -47,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 address: document.getElementById('address-input')?.innerText || ''
             },
             delivery: {
-                outboundType: document.querySelector('#delivery-info-tbl select:nth-of-type(1)')?.value || '',
-                workType: document.querySelector('#delivery-info-tbl select:nth-of-type(2)')?.value || '',
+                outboundType: deliverySelects[0]?.value || '',
+                workType: deliverySelects[1]?.value || '',
                 visitDate: document.querySelector('#visit-date-cell .date-text')?.innerText || '',
                 visitTime: document.getElementById('visit-time-cell')?.innerText || '',
-                deliveryItem: document.querySelector('#delivery-info-tbl select:nth-of-type(3)')?.value || '',
-                accountPaper: document.querySelector('#delivery-info-tbl select:nth-of-type(4)')?.value || ''
+                deliveryItem: deliverySelects[2]?.value || '',
+                accountPaper: deliverySelects[3]?.value || ''
             },
             products: Array.from(document.querySelectorAll('#product-tbody tr.product-row:not(#product-row-template)')).map(tr => ({
                 type: tr.querySelector('.product-type')?.innerText || '',
@@ -106,10 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.meta) {
             const recDate = document.getElementById('reception-date-cell');
             if (recDate) recDate.innerText = data.meta.receptionDate || '';
-            const salesSel = document.querySelector('#meta-group-tbl select:nth-of-type(1)');
-            if (salesSel) salesSel.value = data.meta.salesStaff || '';
-            const acSel = document.querySelector('#meta-group-tbl select:nth-of-type(2)');
-            if (acSel) acSel.value = data.meta.acStaff || '';
+            const metaSelects = document.querySelectorAll('#meta-group-tbl select');
+            if (metaSelects[0]) metaSelects[0].value = data.meta.salesStaff || '';
+            if (metaSelects[1]) metaSelects[1].value = data.meta.acStaff || '';
             const caseCell = document.querySelector('#meta-case-tbl td');
             if (caseCell) caseCell.innerText = data.meta.caseNumber || '';
         }
@@ -131,15 +133,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 配信・配送情報
         if (data.delivery) {
-            const sels = document.querySelectorAll('#delivery-info-tbl select');
-            if (sels[0]) sels[0].value = data.delivery.outboundType || '後来';
-            if (sels[1]) sels[1].value = data.delivery.workType || '店頭';
+            const deliverySelects = document.querySelectorAll('#delivery-info-tbl select');
+            if (deliverySelects[0]) deliverySelects[0].value = data.delivery.outboundType || '後来';
+            if (deliverySelects[1]) deliverySelects[1].value = data.delivery.workType || '店頭';
             const visitDateText = document.querySelector('#visit-date-cell .date-text');
             if (visitDateText) visitDateText.innerText = data.delivery.visitDate || '';
             const visitTime = document.getElementById('visit-time-cell');
             if (visitTime) visitTime.innerText = data.delivery.visitTime || '';
-            if (sels[2]) sels[2].value = data.delivery.deliveryItem || '';
-            if (sels[3]) sels[3].value = data.delivery.accountPaper || '';
+            if (deliverySelects[2]) deliverySelects[2].value = data.delivery.deliveryItem || '';
+            if (deliverySelects[3]) deliverySelects[3].value = data.delivery.accountPaper || '';
         }
 
         // 商品テーブル
@@ -165,6 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('.stock-code').innerText = p.stockCode || '1284';
                     clone.querySelector('select[name="stock-info-type"]').value = p.stockInfoType || '3';
                     clone.querySelector('select[name="order-type"]').value = p.orderType || '';
+
+                    // 金額と数量から行合計を計算してセット
+                    const qty = parseInt(p.quantity, 10) || 1;
+                    const priceVal = parseInt(String(p.price).replace(/,/g, ''), 10) || 0;
+                    const lineTotal = qty * priceVal;
+                    const totalCell = clone.querySelector('.total');
+                    if (totalCell) {
+                        totalCell.innerText = lineTotal !== 0 ? lineTotal.toLocaleString() : '';
+                    }
 
                     if (p.originalPrice) clone.dataset.originalPrice = p.originalPrice;
                     if (p.appliedCouponName) clone.dataset.appliedCouponName = p.appliedCouponName;
@@ -196,6 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('.work-quantity').innerText = w.quantity;
                     clone.querySelector('.work-price').innerText = w.price;
 
+                    // 作業行合計の計算
+                    const qty = parseInt(w.quantity, 10) || 1;
+                    const priceVal = parseInt(String(w.price).replace(/,/g, ''), 10) || 0;
+                    const lineTotal = qty * priceVal;
+                    const totalCell = clone.querySelector('.work-lineTotal');
+                    if (totalCell) {
+                        totalCell.innerText = lineTotal !== 0 ? lineTotal.toLocaleString() : '';
+                    }
+
                     tbody.appendChild(clone);
                 });
                 if (typeof attachWorkTableEvents === 'function') attachWorkTableEvents();
@@ -220,6 +240,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('.posa-type').innerText = po.type;
                     clone.querySelector('.posa-quantity').innerText = po.quantity;
                     clone.querySelector('.posa-price').innerText = po.price;
+
+                    // POSA行合計の計算
+                    const qty = parseInt(po.quantity, 10) || 1;
+                    const priceVal = parseInt(String(po.price).replace(/,/g, ''), 10) || 0;
+                    const lineTotal = qty * priceVal;
+                    const totalCell = clone.querySelector('.posa-lineTotal');
+                    if (totalCell) {
+                        totalCell.innerText = lineTotal !== 0 ? lineTotal.toLocaleString() : '';
+                    }
 
                     if (po.originalPrice) clone.dataset.originalPrice = po.originalPrice;
                     if (po.appliedCouponName) clone.dataset.appliedCouponName = po.appliedCouponName;
@@ -265,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (besshi[1]) besshi[1].innerHTML = data.notes.internal || '';
         }
 
+        // 合計金額の再計算を実行
         if (typeof calculateTotals === 'function') calculateTotals();
     }
 
