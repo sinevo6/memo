@@ -2,24 +2,20 @@
 // セットメニュー判定・確認モーダル制御ロジック（双方向対応）
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-    // 既存の addWorkToTable 関数を退避
     const originalAddWorkToTable = window.addWorkToTable;
     if (!originalAddWorkToTable) return;
 
-    // 1. セットメニュー適用の条件となるSETコード一覧
     const TARGET_SET_CODES = [
         'SET73', 'SET74',
         'SET111', 'SET112', 'SET113', 'SET114', 'SET115',
         'SET121', 'SET122', 'SET123', 'SET124', 'SET125', 'SET126'
     ];
 
-    // 2. 追加するコードと、対応するセットメニュー（SOP）の紐付け
     const SET_MENU_MAPPING = {
         'S28': 'SOP1',
         'S100': 'SOP3'
     };
 
-    // 作業テーブルに指定のSETコードが含まれているかチェック
     function hasTargetSetCodeInWorkTable() {
         const rows = document.querySelectorAll('#work-rows tr.work-row:not(#work-row-template)');
         for (const tr of rows) {
@@ -31,7 +27,6 @@ window.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
-    // 作業テーブルにマッピング対象（S28やS100など）がすでに含まれているかチェックし、該当コードを返す
     function findMappingCodeInWorkTable() {
         const rows = document.querySelectorAll('#work-rows tr.work-row:not(#work-row-template)');
         for (const tr of rows) {
@@ -46,7 +41,6 @@ window.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    // サポートメニュー（menuData）から該当データを取得
     function getSopItemInfo(targetSopCode) {
         let found = null;
         if (typeof menuData !== 'undefined' && Array.isArray(menuData)) {
@@ -55,15 +49,18 @@ window.addEventListener('DOMContentLoaded', () => {
                 return c === targetSopCode;
             });
         }
+        const itemText = found ? (found['作業内容'] || found['メニュー名'] || found['名称'] || `${targetSopCode} 作業内容`) : `${targetSopCode} 作業内容`;
+        const instructionText = found ? (found['作業指示書'] || found['作業手順'] || found['指示書'] || found['作業内容詳細'] || itemText) : itemText;
+
         return {
             code: targetSopCode,
-            item: found ? (found['作業内容'] || found['メニュー名'] || found['名称'] || `${targetSopCode} 作業内容`) : `${targetSopCode} 作業内容`,
+            item: itemText,
             jan: found ? (found['JANコード'] || found['JANｺｰﾄﾞ'] || found['JAN'] || '') : '',
-            price: found ? (found['単価'] || found['価格'] || found['料金'] || '0') : '0'
+            price: found ? (found['単価'] || found['価格'] || found['料金'] || '0') : '0',
+            instruction: instructionText
         };
     }
 
-    // 確認用モーダルを表示する関数
     function showSetMenuConfirmModal(originalItem, mappedInfo, onYes, onNo) {
         const existingModal = document.getElementById('set-menu-confirm-modal');
         if (existingModal) existingModal.remove();
@@ -102,11 +99,9 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 作業追加関数（addWorkToTable）をフックして拡張
     window.addWorkToTable = function(item) {
         const code = item.code ? item.code.trim() : '';
 
-        // パターン1：【SETコードが先に入っていて、あとから S28/S100 を追加する場合】
         if (SET_MENU_MAPPING[code] && hasTargetSetCodeInWorkTable()) {
             const targetSopCode = SET_MENU_MAPPING[code];
             const mappedItem = getSopItemInfo(targetSopCode);
@@ -114,13 +109,12 @@ window.addEventListener('DOMContentLoaded', () => {
             showSetMenuConfirmModal(
                 item,
                 mappedItem,
-                () => { originalAddWorkToTable(mappedItem); }, // 「はい」：SOPを追加
-                () => { originalAddWorkToTable(item); }       // 「いいえ」：元の作業を追加
+                () => { originalAddWorkToTable(mappedItem); },
+                () => { originalAddWorkToTable(item); }
             );
             return;
         }
 
-        // パターン2：【S28/S100が先に入っていて、あとから SETコードを追加する場合】
         if (TARGET_SET_CODES.includes(code)) {
             const existing = findMappingCodeInWorkTable();
             if (existing) {
@@ -135,18 +129,15 @@ window.addEventListener('DOMContentLoaded', () => {
                     originalItemInfo,
                     mappedItem,
                     () => {
-                        // 「はい」：既存のS28等の行をSOPに書き換え、今回のSETコードも追加
                         existing.tr.querySelector('.work-code').textContent = mappedItem.code;
                         existing.tr.querySelector('.work-item').textContent = mappedItem.item;
                         existing.tr.querySelector('.work-janCode').textContent = mappedItem.jan;
                         existing.tr.querySelector('.work-price').textContent = Number(mappedItem.price).toLocaleString();
                         existing.tr.querySelector('.work-price').dispatchEvent(new Event('input', { bubbles: true }));
-                        
-                        originalAddWorkToTable(item); // SETコードを追加
+
+                        originalAddWorkToTable(item);
                     },
                     () => {
-                        // 「いいえ」：既存のS28等はそのままにして、SETコードのみ追加
-                        originalAddWorkToTeamIfPossible();
                         originalAddWorkToTable(item);
                     }
                 );
@@ -154,7 +145,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // どちらの条件にも合致しない場合は通常通り追加
         originalAddWorkToTable(item);
     };
 });

@@ -130,7 +130,6 @@ function addProductRowHandler() {
     attachTableEvents();
 }
 
-// モーダル等から商品を追加する際の中継関数（1行目が空ならそこに挿入、それ以外なら追加）
 function addProductToTable(item) {
     const tbody = document.getElementById('product-tbody');
     const template = document.getElementById('product-row-template');
@@ -185,7 +184,6 @@ function addProductToTable(item) {
 }
 
 function updateMainTable() {
-    // 初期化用：行が全くない場合に空行を1つ作る
     const tbody = document.getElementById('product-tbody');
     const template = document.getElementById('product-row-template');
     if (!tbody || !template) return;

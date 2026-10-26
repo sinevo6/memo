@@ -11,7 +11,6 @@ const btnClose = document.getElementById('close-modal');
 const modalTbody = document.getElementById('modal-tbody');
 const searchKeywordInput = document.getElementById('search-keyword');
 
-// 選択状態管理用（JANコードまたは商品・施策名等を保持）
 let selectedProductKeys = new Set();
 
 if (btnOpen) {
@@ -329,7 +328,7 @@ let tableHeaders = [];
 let currentKeywords = [];
 let selectedSupportKeys = new Set();
 
-const hideColumns = ['janコード', 'jan', '作業手順', '作業手順書'];
+const hideColumns = ['janコード', 'jan', '作業手順', '作業指示書'];
 const detailColumns = ['作業内容詳細', '補足事項', '関連メニュー'];
 
 const supportModal = document.getElementById('support-modal');
@@ -440,7 +439,7 @@ function renderSupportTable(data) {
         const getVal = (candidates) => {
             for (let c of candidates) {
                 const foundKey = tableHeaders.find(h => h.toLowerCase() === c.toLowerCase());
-                if (foundKey && item[foundKey] !== undefined) return item[foundKey];
+                if (foundKey && item[foundKey] !== undefined && item[foundKey] !== '' && item[foundKey] !== 'nan') return item[foundKey];
             }
             return '';
         };
@@ -449,6 +448,9 @@ function renderSupportTable(data) {
         const itemVal = getVal(['作業内容', 'メニュー名', '名称']);
         const janVal = getVal(['JANコード', 'JANｺｰﾄﾞ', 'JAN']);
         const priceVal = getVal(['単価', '価格', '料金']);
+        
+        // 作業指示書列または作業手順・詳細のデータを取得
+        const instructionVal = getVal(['作業指示書', '作業手順', '指示書', '作業内容詳細', '補足事項']) || itemVal;
 
         const itemKey = codeVal + '_' + itemVal;
         const tr = document.createElement('tr');
@@ -514,7 +516,13 @@ function renderSupportTable(data) {
             td.addEventListener('click', () => {
                 selectedSupportKeys.add(itemKey);
                 tr.classList.add('selected');
-                addWorkToTable({ code: codeVal, item: itemVal, jan: janVal, price: priceVal });
+                addWorkToTable({ 
+                    code: codeVal, 
+                    item: itemVal, 
+                    jan: janVal, 
+                    price: priceVal, 
+                    instruction: instructionVal 
+                });
             });
         });
     });
@@ -559,7 +567,6 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
-// 共通：モーダルを閉じる際にフィルターやハイライト状態をクリアする関数
 function clearModalState(type) {
     if (type === 'product') {
         selectedProductKeys.clear();

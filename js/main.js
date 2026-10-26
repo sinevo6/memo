@@ -2,11 +2,48 @@
 // メイン初期化・UI共通イベント
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-    // 印刷処理
+    // 印刷処理（商談メモ側）
     const printBtn = document.getElementById('print-btn');
     if (printBtn) {
         printBtn.addEventListener('click', () => {
             window.print();
+        });
+    }
+
+    // 印刷処理（作業指示書側）
+    const instructionPrintBtn = document.getElementById('instruction-print-btn');
+    if (instructionPrintBtn) {
+        instructionPrintBtn.addEventListener('click', () => {
+            window.print();
+        });
+    }
+
+    // 作業指示書ボタンの切り替え処理
+    const toggleInstructionBtn = document.getElementById('toggle-instruction-btn');
+    if (toggleInstructionBtn) {
+        toggleInstructionBtn.addEventListener('click', () => {
+            const isViewingInstruction = document.body.classList.toggle('instruction-view-mode');
+            if (isViewingInstruction) {
+                if (typeof window.syncInstructionFromWorkTable === 'function') {
+                    window.syncInstructionFromWorkTable();
+                }
+                if (typeof window.updateInstructionHeaderInfo === 'function') {
+                    window.updateInstructionHeaderInfo();
+                }
+                toggleInstructionBtn.textContent = '商談メモに戻る';
+                toggleInstructionBtn.style.backgroundColor = '#d0e8ff';
+            } else {
+                toggleInstructionBtn.textContent = '作業指示書';
+                toggleInstructionBtn.style.backgroundColor = '';
+            }
+        });
+    }
+
+    // 作業指示書側の「商談メモに戻る」ボタン
+    const instructionBackBtn = document.getElementById('instruction-back-btn');
+    if (instructionBackBtn && toggleInstructionBtn) {
+        instructionBackBtn.addEventListener('click', () => {
+            toggleInstructionBtn.click();
         });
     }
 
