@@ -834,7 +834,7 @@ body.instruction-view-mode .instruction-container {
 .instruction-container .instruction-info-tbl th,
 .instruction-container .instruction-info-tbl td {
   border: 1px solid #000;
-  font-size: 13px;
+  font-size: 18px;
   padding: 4px 6px;
   text-align: center;
   vertical-align: middle;

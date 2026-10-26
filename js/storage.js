@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveBtn = document.getElementById('save-btn');
     const loadBtn = document.getElementById('load-btn');
 
-    // 受付日の文字列（例: "10/25" や "2026/10/25" 等）からファイル名用の YYYYMMDD を生成する関数
+    // 受付日の文字列からファイル名用の YYYYMMDD を生成する関数
     function getFormattedDateString() {
         const receptionDateText = document.getElementById('reception-date-cell')?.innerText.trim() || '';
         const now = new Date();
@@ -168,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('select[name="stock-info-type"]').value = p.stockInfoType || '3';
                     clone.querySelector('select[name="order-type"]').value = p.orderType || '';
 
-                    // 金額と数量から行合計を計算してセット
                     const qty = parseInt(p.quantity, 10) || 1;
                     const priceVal = parseInt(String(p.price).replace(/,/g, ''), 10) || 0;
                     const lineTotal = qty * priceVal;
@@ -181,6 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (p.appliedCouponName) clone.dataset.appliedCouponName = p.appliedCouponName;
                     if (p.appliedCouponVal) clone.dataset.appliedCouponVal = p.appliedCouponVal;
                     if (p.appliedPercent) clone.dataset.appliedPercent = p.appliedPercent;
+
+                    // クーポンや値引がある場合は色付きで再描画
+                    if ((p.appliedCouponName && p.appliedCouponName !== '') || (p.appliedPercent && p.appliedPercent !== '0')) {
+                        let cleanType = p.type.replace(/【[^】]*?値引】/g, '').replace(/【[^】]*?】/g, '').trim();
+                        clone.dataset.baseModelText = cleanType;
+                        if (typeof applyCalculatedDiscount === 'function') {
+                            applyCalculatedDiscount(clone);
+                        }
+                    }
 
                     tbody.appendChild(clone);
                 });
@@ -207,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('.work-quantity').innerText = w.quantity;
                     clone.querySelector('.work-price').innerText = w.price;
 
-                    // 作業行合計の計算
                     const qty = parseInt(w.quantity, 10) || 1;
                     const priceVal = parseInt(String(w.price).replace(/,/g, ''), 10) || 0;
                     const lineTotal = qty * priceVal;
@@ -241,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     clone.querySelector('.posa-quantity').innerText = po.quantity;
                     clone.querySelector('.posa-price').innerText = po.price;
 
-                    // POSA行合計の計算
                     const qty = parseInt(po.quantity, 10) || 1;
                     const priceVal = parseInt(String(po.price).replace(/,/g, ''), 10) || 0;
                     const lineTotal = qty * priceVal;
@@ -254,6 +260,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (po.appliedCouponName) clone.dataset.appliedCouponName = po.appliedCouponName;
                     if (po.appliedCouponVal) clone.dataset.appliedCouponVal = po.appliedCouponVal;
                     if (po.appliedPercent) clone.dataset.appliedPercent = po.appliedPercent;
+
+                    if ((po.appliedCouponName && po.appliedCouponName !== '') || (po.appliedPercent && po.appliedPercent !== '0')) {
+                        let cleanType = po.type.replace(/【[^】]*?値引】/g, '').replace(/【[^】]*?】/g, '').trim();
+                        clone.dataset.baseModelText = cleanType;
+                        if (typeof applyCalculatedDiscount === 'function') {
+                            applyCalculatedDiscount(clone);
+                        }
+                    }
 
                     tbody.appendChild(clone);
                 });
@@ -294,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (besshi[1]) besshi[1].innerHTML = data.notes.internal || '';
         }
 
-        // 合計金額の再計算を実行
         if (typeof calculateTotals === 'function') calculateTotals();
     }
 

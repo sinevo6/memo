@@ -1,5 +1,5 @@
 // ==========================================
-// 計算・バーコード・イベント値引き関連
+// 計算・バーコード・イベント値引関連
 // ==========================================
 let couponList = [];
 let currentActiveRow = null; 
@@ -171,19 +171,35 @@ function applyCalculatedDiscount(tr) {
     if (typeCell) {
         let baseText = tr.dataset.baseModelText;
         if (!baseText) {
-            baseText = typeCell.textContent.replace(/【.*?】/g, '').trim();
+            let rawText = typeCell.textContent || typeCell.innerText || '';
+            baseText = rawText.replace(/<[^>]*>?/gm, '').replace(/【[^】]*?値引】/g, '').replace(/【[^】]*?】/g, '').trim();
             tr.dataset.baseModelText = baseText;
         }
 
-        let suffix = '';
+        let suffixHtml = '';
         const cName = tr.dataset.appliedCouponName;
         const pVal = tr.dataset.appliedPercent;
 
-        if (cName) suffix += `【${cName}】`;
-        if (pVal && pVal !== '0') suffix += `【${pVal}%値引】`;
+        // クーポンは青字
+        if (cName) {
+            suffixHtml += `<span style="color: blue;">【${escapeHtml(cName)}】</span>`;
+        }
+        // 〇％値引は赤字
+        if (pVal && pVal !== '0') {
+            suffixHtml += `<span style="color: red;">【安ﾊﾟｽ${pVal}%値引】</span>`;
+        }
 
-        typeCell.textContent = baseText + (suffix ? '\n' + suffix : '');
+        typeCell.innerHTML = escapeHtml(baseText) + (suffixHtml ? '<br>' + suffixHtml : '');
     }
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function generateBarcodesForContainer(containerSelector) {
@@ -193,7 +209,6 @@ function generateBarcodesForContainer(containerSelector) {
         if (janCell && svgElem) {
             let janText = janCell.textContent.trim();
             if (janText && janText !== 'POSA' && /^\d+$/.test(janText)) {
-                // JANコードが12桁の場合は左に0を加えて13桁にする
                 if (janText.length === 12) {
                     janText = '0' + janText;
                 }
@@ -257,7 +272,6 @@ function calculateTotals() {
     const posaDisplayLine = document.getElementById('posa-total-display-line');
     const totalDividerLine = document.getElementById('total-divider-line');
 
-    // POSAテーブルに行が入力されているかどうかを判定
     let hasValidPosa = false;
     document.querySelectorAll('#posa-rows tr.posa-row:not(#posa-row-template)').forEach(tr => {
         const typeText = tr.querySelector('.posa-type')?.textContent.trim() || '';
