@@ -810,17 +810,17 @@ body.instruction-view-mode .instruction-container {
   display: block !important;
 }
 
-/* 1. タイトル */
+/* 1. タイトル(作業指示書) */
 .instruction-container .instruction-header-title {
-  background-color: #000;
-  color: #fff;
+  background-color: #eee;
+  color: #000;
   text-align: center;
-  font-size: 20px;
+  font-size: 25px;
   font-weight: bold;
   padding: 8px 0;
   letter-spacing: 2px;
   margin-bottom: 6px;
-  border: 1px solid #000;
+  border: 3px double #000;
 }
 
 /* 2. 基本情報テーブル */
@@ -907,8 +907,8 @@ body.instruction-view-mode .instruction-container {
 }
 
 .instruction-container .instruction-notes-header {
-  background-color: #000;
-  color: #fff;
+  background-color: #eee;
+  color: #00;
   font-weight: bold;
   text-align: center;
 }

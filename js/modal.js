@@ -100,11 +100,22 @@ function buildFilters() {
     });
     nameContainer.innerHTML = nameHtml;
 
-    document.querySelectorAll('input[name="maker-filter"]').forEach(chk => {
-        chk.addEventListener('change', filterAndRender);
-    });
-    document.querySelectorAll('input[name="name-filter"]').forEach(chk => {
-        chk.addEventListener('change', filterAndRender);
+    bindSingleSelectFilters();
+}
+
+function bindSingleSelectFilters() {
+    const filters = document.querySelectorAll(
+        'input[name="maker-filter"], input[name="name-filter"]'
+    );
+    filters.forEach(chk => {
+        chk.addEventListener('change', () => {
+            if (chk.checked) {
+                filters.forEach(other => {
+                    if (other !== chk) other.checked = false;
+                });
+            }
+            filterAndRender();
+        });
     });
 }
 

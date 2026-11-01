@@ -62,8 +62,14 @@ function buildCouponMenuItems() {
 const contextMenu = document.getElementById('event-discount-menu');
 
 function bindEventDiscountMenu(cell) {
-    cell.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
+    if (cell.dataset.eventDiscountMenuBound) return;
+    cell.dataset.eventDiscountMenuBound = 'true';
+
+    let touchLongPressTimer = null;
+    let touchStartCoordinates = null;
+    let suppressContextMenuUntil = 0;
+
+    function openMenu(pageX, pageY) {
         const tr = cell.closest('tr');
         if (tr.id.includes('template')) return;
 
@@ -83,13 +89,66 @@ function bindEventDiscountMenu(cell) {
 
         if (contextMenu) {
             contextMenu.style.display = 'block';
-            let left = e.pageX;
-            let top = e.pageY;
+            let left = pageX;
+            let top = pageY;
             if (left + 200 > window.innerWidth) left = window.innerWidth - 210;
             if (top + 300 > window.innerHeight) top = window.innerHeight - 310;
             contextMenu.style.left = `${left}px`;
             contextMenu.style.top = `${top}px`;
         }
+    }
+
+    function clearTouchLongPressTimer() {
+        if (touchLongPressTimer !== null) {
+            clearTimeout(touchLongPressTimer);
+            touchLongPressTimer = null;
+        }
+    }
+
+    cell.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        clearTouchLongPressTimer();
+        if (Date.now() < suppressContextMenuUntil) return;
+        openMenu(e.pageX, e.pageY);
+    });
+
+    cell.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        clearTouchLongPressTimer();
+        suppressContextMenuUntil = 0;
+
+        const touch = e.touches[0];
+        const startX = touch.clientX;
+        const startY = touch.clientY;
+        touchStartCoordinates = [startX, startY];
+        const pageX = touch.pageX;
+        const pageY = touch.pageY;
+        touchLongPressTimer = setTimeout(() => {
+            touchLongPressTimer = null;
+            touchStartCoordinates = null;
+            suppressContextMenuUntil = Date.now() + 1000;
+            openMenu(pageX, pageY);
+        }, 600);
+    });
+
+    cell.addEventListener('touchmove', (e) => {
+        if (touchLongPressTimer === null || !touchStartCoordinates || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        const [startX, startY] = touchStartCoordinates;
+        if (Math.hypot(touch.clientX - startX, touch.clientY - startY) > 10) {
+            clearTouchLongPressTimer();
+            touchStartCoordinates = null;
+        }
+    });
+
+    cell.addEventListener('touchend', () => {
+        clearTouchLongPressTimer();
+        touchStartCoordinates = null;
+    });
+
+    cell.addEventListener('touchcancel', () => {
+        clearTouchLongPressTimer();
+        touchStartCoordinates = null;
     });
 }
 
