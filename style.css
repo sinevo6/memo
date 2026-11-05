@@ -12,6 +12,7 @@ body {
 
 /* プレビュー全体を包むコンテナ */
 .main-container {
+  width: 100%;
   max-width: 765px;
   margin-left: auto;
   margin-right: auto;
@@ -722,7 +723,7 @@ th.no-border, td.no-border {
 
 .custom-context-menu {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 2000;
   background: #fff;
   border: 1px solid #767676;
@@ -731,6 +732,8 @@ th.no-border, td.no-border {
   min-width: 180px;
   padding: 2px 0;
   max-height: 380px;
+  max-width: calc(100vw - 16px);
+  box-sizing: border-box;
   overflow-y: auto;
 }
 .custom-context-menu .menu-item {

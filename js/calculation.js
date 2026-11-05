@@ -69,7 +69,7 @@ function bindEventDiscountMenu(cell) {
     let touchStartCoordinates = null;
     let suppressContextMenuUntil = 0;
 
-    function openMenu(pageX, pageY) {
+    function openMenu() {
         const tr = cell.closest('tr');
         if (tr.id.includes('template')) return;
 
@@ -89,10 +89,11 @@ function bindEventDiscountMenu(cell) {
 
         if (contextMenu) {
             contextMenu.style.display = 'block';
-            let left = pageX;
-            let top = pageY;
-            if (left + 200 > window.innerWidth) left = window.innerWidth - 210;
-            if (top + 300 > window.innerHeight) top = window.innerHeight - 310;
+            const cellRect = cell.getBoundingClientRect();
+            const menuRect = contextMenu.getBoundingClientRect();
+            const top = cellRect.bottom + 2;
+            const left = Math.max(8, Math.min(cellRect.left, window.innerWidth - menuRect.width - 8));
+            contextMenu.style.maxHeight = `${Math.max(0, window.innerHeight - top - 8)}px`;
             contextMenu.style.left = `${left}px`;
             contextMenu.style.top = `${top}px`;
         }
@@ -109,7 +110,7 @@ function bindEventDiscountMenu(cell) {
         e.preventDefault();
         clearTouchLongPressTimer();
         if (Date.now() < suppressContextMenuUntil) return;
-        openMenu(e.pageX, e.pageY);
+        openMenu();
     });
 
     cell.addEventListener('touchstart', (e) => {
@@ -121,13 +122,11 @@ function bindEventDiscountMenu(cell) {
         const startX = touch.clientX;
         const startY = touch.clientY;
         touchStartCoordinates = [startX, startY];
-        const pageX = touch.pageX;
-        const pageY = touch.pageY;
         touchLongPressTimer = setTimeout(() => {
             touchLongPressTimer = null;
             touchStartCoordinates = null;
             suppressContextMenuUntil = Date.now() + 1000;
-            openMenu(pageX, pageY);
+            openMenu();
         }, 600);
     });
 
