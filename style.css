@@ -12,7 +12,6 @@ body {
 
 /* プレビュー全体を包むコンテナ */
 .main-container {
-  width: 100%;
   max-width: 765px;
   margin-left: auto;
   margin-right: auto;
@@ -149,18 +148,6 @@ h1 {
     width: 100%;
     table-layout: fixed;
     word-break: break-all;
-}
-
-.product-table-scroll,
-.work-table-scroll,
-.posa-table-scroll {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-#product-tbl {
-    min-width: 555px;
 }
 
 span.section-title {
@@ -509,72 +496,6 @@ th.no-border, td.no-border {
 #posa-tbl th:nth-child(6), #posa-tbl td:nth-child(6) { width: 50px; }
 #posa-tbl th:nth-child(7), #posa-tbl td:nth-child(7) { width: 30px; }
 
-@media screen and (max-width: 600px) {
-    #product-tbl,
-    #work-tbl,
-    #posa-tbl {
-        width: 100%;
-        min-width: 0;
-        table-layout: fixed;
-    }
-
-    #product-tbl th:nth-child(5),
-    #product-tbl td:nth-child(5),
-    #work-tbl th:nth-child(6),
-    #work-tbl td:nth-child(6) {
-        display: none;
-    }
-
-    #product-tbl th,
-    #product-tbl td,
-    #work-tbl th,
-    #work-tbl td,
-    #posa-tbl th,
-    #posa-tbl td {
-        font-size: 8px;
-        padding: 1px 0;
-        overflow-wrap: anywhere;
-    }
-
-    #product-tbl th:nth-child(1), #product-tbl td:nth-child(1) { width: 3%; }
-    #product-tbl th:nth-child(2), #product-tbl td:nth-child(2) { width: 5%; }
-    #product-tbl th:nth-child(3), #product-tbl td:nth-child(3) { width: 22%; }
-    #product-tbl th:nth-child(6), #product-tbl td:nth-child(6) { width: 6%; }
-    #product-tbl th:nth-child(7), #product-tbl td:nth-child(7) { width: 9%; }
-    #product-tbl th:nth-child(8), #product-tbl td:nth-child(8) { width: 9%; }
-    #product-tbl th:nth-child(9), #product-tbl td:nth-child(9) { width: 6%; }
-    #product-tbl th:nth-child(10), #product-tbl td:nth-child(10) { width: 7%; }
-    #product-tbl th:nth-child(11), #product-tbl td:nth-child(11) { width: 9%; }
-    #product-tbl th:nth-child(12), #product-tbl td:nth-child(12) { width: 7%; }
-    #product-tbl th:nth-child(13), #product-tbl td:nth-child(13) { width: 7%; }
-    #product-tbl th:nth-child(14), #product-tbl td:nth-child(14) { width: 7%; }
-    #product-tbl th:nth-child(15), #product-tbl td:nth-child(15) { width: 3%; }
-
-    #work-tbl th:nth-child(1), #work-tbl td:nth-child(1) { width: 4%; }
-    #work-tbl th:nth-child(2), #work-tbl td:nth-child(2) { width: 6%; }
-    #work-tbl th:nth-child(3), #work-tbl td:nth-child(3) { width: 13%; }
-    #work-tbl th:nth-child(4), #work-tbl td:nth-child(4) { width: 43%; }
-    #work-tbl th:nth-child(7), #work-tbl td:nth-child(7) { width: 8%; }
-    #work-tbl th:nth-child(8), #work-tbl td:nth-child(8) { width: 10%; }
-    #work-tbl th:nth-child(9), #work-tbl td:nth-child(9) { width: 11%; }
-    #work-tbl th:nth-child(10), #work-tbl td:nth-child(10) { width: 5%; }
-
-    #posa-tbl {
-        width: 100%;
-    }
-    #posa-tbl th:nth-child(1), #posa-tbl td:nth-child(1) { width: 4%; }
-    #posa-tbl th:nth-child(2), #posa-tbl td:nth-child(2) { width: 6%; }
-    #posa-tbl th:nth-child(3), #posa-tbl td:nth-child(3) { width: 44%; }
-    #posa-tbl th:nth-child(4), #posa-tbl td:nth-child(4) { width: 10%; }
-    #posa-tbl th:nth-child(5), #posa-tbl td:nth-child(5) { width: 16%; }
-    #posa-tbl th:nth-child(6), #posa-tbl td:nth-child(6) { width: 16%; }
-    #posa-tbl th:nth-child(7), #posa-tbl td:nth-child(7) { width: 4%; }
-
-    #product-tbl select {
-        font-size: 8px;
-    }
-}
-
 #owned-equipment-tbl th:nth-child(1), #owned-equipment-tbl td:nth-child(1) { width: 20px; }
 #owned-equipment-tbl th:nth-child(2), #owned-equipment-tbl td:nth-child(2) { width: 20px; }
 #owned-equipment-tbl th:nth-child(3), #owned-equipment-tbl td:nth-child(3) { width: 150px; }
@@ -801,7 +722,7 @@ th.no-border, td.no-border {
 
 .custom-context-menu {
   display: none;
-  position: fixed;
+  position: absolute;
   z-index: 2000;
   background: #fff;
   border: 1px solid #767676;
@@ -810,8 +731,6 @@ th.no-border, td.no-border {
   min-width: 180px;
   padding: 2px 0;
   max-height: 380px;
-  max-width: calc(100vw - 16px);
-  box-sizing: border-box;
   overflow-y: auto;
 }
 .custom-context-menu .menu-item {
@@ -1006,11 +925,6 @@ body.instruction-view-mode .instruction-container {
     body {
         margin: 0;
         padding: 0;
-    }
-    .product-table-scroll,
-    .work-table-scroll,
-    .posa-table-scroll {
-        overflow: visible;
     }
     th.no-border,
     td.no-border,
