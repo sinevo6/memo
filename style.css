@@ -151,6 +151,16 @@ h1 {
     word-break: break-all;
 }
 
+.product-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#product-tbl {
+    min-width: 555px;
+}
+
 span.section-title {
     font-size: 10px;
     font-weight: bold;
@@ -928,6 +938,9 @@ body.instruction-view-mode .instruction-container {
     body {
         margin: 0;
         padding: 0;
+    }
+    .product-table-scroll {
+        overflow: visible;
     }
     th.no-border,
     td.no-border,

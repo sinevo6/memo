@@ -90,10 +90,17 @@ function bindEventDiscountMenu(cell) {
         if (contextMenu) {
             contextMenu.style.display = 'block';
             const cellRect = cell.getBoundingClientRect();
+            const viewport = window.visualViewport;
+            const viewportLeft = viewport ? viewport.offsetLeft : 0;
+            const viewportTop = viewport ? viewport.offsetTop : 0;
+            const viewportWidth = viewport ? viewport.width : window.innerWidth;
+            const viewportHeight = viewport ? viewport.height : window.innerHeight;
+            contextMenu.style.minWidth = `${Math.max(0, Math.min(180, viewportWidth - 16))}px`;
+            contextMenu.style.maxWidth = `${Math.max(0, viewportWidth - 16)}px`;
             const menuRect = contextMenu.getBoundingClientRect();
             const top = cellRect.bottom + 2;
-            const left = Math.max(8, Math.min(cellRect.left, window.innerWidth - menuRect.width - 8));
-            contextMenu.style.maxHeight = `${Math.max(0, window.innerHeight - top - 8)}px`;
+            const left = Math.max(viewportLeft + 8, Math.min(cellRect.left, viewportLeft + viewportWidth - menuRect.width - 8));
+            contextMenu.style.maxHeight = `${Math.max(0, viewportTop + viewportHeight - top - 8)}px`;
             contextMenu.style.left = `${left}px`;
             contextMenu.style.top = `${top}px`;
         }
