@@ -1,13 +1,13 @@
 @page {
   size: A4;
-  margin: 10mm 5mm 10mm 5mm;
+  margin: 10mm 4mm 10mm 4mm;
 }
 
 body { 
   font-family: "BIZ UDPMedium", "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif; 
   margin: 0;
   background: #fff;
-  padding: 2mm;
+  padding: 0mm;
 }
 
 /* プレビュー全体を包むコンテナ */
@@ -25,6 +25,20 @@ body {
   align-items: flex-end;
   margin-bottom: 1px;
 }
+
+/* 1. 基本的にテーブル全体（またはページ全体）のテキスト選択を禁止する */
+body {
+  -webkit-user-select: none; /* Safari, Chrome, Edge用 */
+  user-select: none;
+}
+
+/* 2. 編集可能な td（contenteditable属性がある要素）の中だけは選択を許可する */
+td[contenteditable="true"],
+td[contenteditable="true"] * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 
 h1 {
   font-size: 16px;
@@ -909,7 +923,7 @@ body.instruction-view-mode .instruction-container {
 
 .instruction-container .instruction-notes-header {
   background-color: #eee;
-  color: #00;
+  color: #000;
   font-weight: bold;
   text-align: center;
 }
@@ -932,6 +946,9 @@ body.instruction-view-mode .instruction-container {
     button,
     .sticky-header {
         display: none !important;
+    }
+    .header, .footer {
+      display: none; /* 画面用のヘッダー・フッターを消す */
     }
   /* ▼ 追加：印刷時に作業指示書の×ボタン列（ヘッダーとセル）および枠を非表示にする ▼ */
     .instruction-work-tbl th:nth-child(3),
