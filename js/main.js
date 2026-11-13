@@ -2,6 +2,12 @@
 // メイン初期化・UI共通イベント
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
+    // ページ全体（document）で右クリックのイベントを監視し、デフォルト動作をキャンセルする
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+            console.log('ページ全体の右クリックがブロックされました');
+        });
+
     // 印刷処理（商談メモ側）
     const printBtn = document.getElementById('print-btn');
     if (printBtn) {
@@ -63,11 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // 配信情報テーブルの訪問日・お時間のクリック操作設定
     const visitDateCell = document.getElementById('visit-date-cell');
-    const visitTimeCell = document.getElementById('visit-time-cell');
-    const timeModal = document.getElementById('time-modal');
-    const closeTimeModal = document.getElementById('close-time-modal');
-    const timeSelect = document.getElementById('time-select');
-    const timeSubmitBtn = document.getElementById('time-submit-btn');
+    
 
     if (visitDateCell) {
         visitDateCell.style.position = 'relative';
@@ -115,27 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (visitTimeCell && timeModal) {
-        visitTimeCell.addEventListener('click', (e) => {
-            e.stopPropagation();
-            timeModal.style.display = 'block';
-        });
-    }
-
-    if (closeTimeModal && timeModal) {
-        closeTimeModal.addEventListener('click', () => {
-            timeModal.style.display = 'none';
-        });
-    }
-
-    if (timeSubmitBtn && timeSelect && visitTimeCell && timeModal) {
-        timeSubmitBtn.addEventListener('click', () => {
-            if (timeSelect.value) {
-                visitTimeCell.innerText = timeSelect.value;
-                timeModal.style.display = 'none';
-            }
-        });
-    }
+    
 
     // 郵便番号自動検索
     const zipInput = document.getElementById('zip-input');

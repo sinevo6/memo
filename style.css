@@ -737,7 +737,7 @@ th.no-border, td.no-border {
 
 .custom-context-menu {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 2000;
   background: #fff;
   border: 1px solid #767676;

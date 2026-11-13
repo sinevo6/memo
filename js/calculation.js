@@ -61,6 +61,36 @@ function buildCouponMenuItems() {
 
 const contextMenu = document.getElementById('event-discount-menu');
 
+// メニューを開く共通関数を外部に正しく配置
+function openMenuForCell(cell, clientX, clientY) {
+    const tr = cell.closest('tr');
+    if (!tr || tr.id.includes('template')) return;
+
+    currentActiveRow = tr;
+    if (!tr.dataset.originalPrice) {
+        const currentPriceVal = parseInt(cell.textContent.replace(/,/g, ''), 10) || 0;
+        tr.dataset.originalPrice = currentPriceVal;
+        tr.dataset.appliedCouponName = '';
+        tr.dataset.appliedCouponVal = '0';
+        tr.dataset.appliedPercent = '0';
+    }
+
+    selectedTempCoupon = tr.dataset.appliedCouponName ? { name: tr.dataset.appliedCouponName, val: tr.dataset.appliedCouponVal } : null;
+    selectedTempPercent = tr.dataset.appliedPercent && tr.dataset.appliedPercent !== '0' ? tr.dataset.appliedPercent : null;
+
+    updateMenuSelectionState();
+
+    if (contextMenu) {
+        contextMenu.style.display = 'block';
+        let left = clientX;
+        let top = clientY;
+        if (left + 200 > window.innerWidth) left = window.innerWidth - 210;
+        if (top + 300 > window.innerHeight) top = window.innerHeight - 310;
+        contextMenu.style.left = `${left}px`;
+        contextMenu.style.top = `${top}px`;
+    }
+}
+
 function bindEventDiscountMenu(cell) {
     if (cell.dataset.eventDiscountMenuBound) return;
     cell.dataset.eventDiscountMenuBound = 'true';
@@ -68,35 +98,6 @@ function bindEventDiscountMenu(cell) {
     let touchLongPressTimer = null;
     let touchStartCoordinates = null;
     let suppressContextMenuUntil = 0;
-
-    function openMenu(pageX, pageY) {
-        const tr = cell.closest('tr');
-        if (tr.id.includes('template')) return;
-
-        currentActiveRow = tr;
-        if (!tr.dataset.originalPrice) {
-            const currentPriceVal = parseInt(cell.textContent.replace(/,/g, ''), 10) || 0;
-            tr.dataset.originalPrice = currentPriceVal;
-            tr.dataset.appliedCouponName = '';
-            tr.dataset.appliedCouponVal = '0';
-            tr.dataset.appliedPercent = '0';
-        }
-
-        selectedTempCoupon = tr.dataset.appliedCouponName ? { name: tr.dataset.appliedCouponName, val: tr.dataset.appliedCouponVal } : null;
-        selectedTempPercent = tr.dataset.appliedPercent && tr.dataset.appliedPercent !== '0' ? tr.dataset.appliedPercent : null;
-
-        updateMenuSelectionState();
-
-        if (contextMenu) {
-            contextMenu.style.display = 'block';
-            let left = pageX;
-            let top = pageY;
-            if (left + 200 > window.innerWidth) left = window.innerWidth - 210;
-            if (top + 300 > window.innerHeight) top = window.innerHeight - 310;
-            contextMenu.style.left = `${left}px`;
-            contextMenu.style.top = `${top}px`;
-        }
-    }
 
     function clearTouchLongPressTimer() {
         if (touchLongPressTimer !== null) {
@@ -109,7 +110,7 @@ function bindEventDiscountMenu(cell) {
         e.preventDefault();
         clearTouchLongPressTimer();
         if (Date.now() < suppressContextMenuUntil) return;
-        openMenu(e.pageX, e.pageY);
+        openMenuForCell(cell, e.clientX, e.clientY);
     });
 
     cell.addEventListener('touchstart', (e) => {
@@ -121,13 +122,15 @@ function bindEventDiscountMenu(cell) {
         const startX = touch.clientX;
         const startY = touch.clientY;
         touchStartCoordinates = [startX, startY];
-        const pageX = touch.pageX;
-        const pageY = touch.pageY;
+        
+        const clientX = touch.clientX;
+        const clientY = touch.clientY;
+
         touchLongPressTimer = setTimeout(() => {
             touchLongPressTimer = null;
             touchStartCoordinates = null;
             suppressContextMenuUntil = Date.now() + 1000;
-            openMenu(pageX, pageY);
+            openMenuForCell(cell, clientX, clientY);
         }, 600);
     });
 
@@ -239,11 +242,9 @@ function applyCalculatedDiscount(tr) {
         const cName = tr.dataset.appliedCouponName;
         const pVal = tr.dataset.appliedPercent;
 
-        // クーポンは青字
         if (cName) {
             suffixHtml += `<span style="color: blue;">【${escapeHtml(cName)}】</span>`;
         }
-        // 〇％値引は赤字
         if (pVal && pVal !== '0') {
             suffixHtml += `<span style="color: red;">【安ﾊﾟｽ${pVal}%値引】</span>`;
         }
@@ -254,11 +255,11 @@ function applyCalculatedDiscount(tr) {
 
 function escapeHtml(str) {
     return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"')
+        .replace(/'/g, '&#39;');
 }
 
 function generateBarcodesForContainer(containerSelector) {
